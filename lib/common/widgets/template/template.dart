@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/my_theme.dart';
@@ -50,6 +52,16 @@ class Template extends StatelessWidget {
             ),
             leading: Icon(
               Icons.person,
+            ),
+            onTap: () {},
+          ),
+          ListTile(
+            title: Text(
+              'Log Out',
+              style: TextStyle(color: MyTheme.primary),
+            ),
+            leading: Icon(
+              Icons.logout,
             ),
             onTap: () {},
           ),

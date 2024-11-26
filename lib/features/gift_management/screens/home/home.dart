@@ -1,13 +1,42 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:accordion/accordion.dart';
 import 'package:flutter/material.dart';
+import 'package:hedyety/Database/local_database.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
+import 'package:hedyety/features/gift_management/screens/home/landscape_home.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+import '../../models/users.dart';
+
+
+class Home extends StatefulWidget {
+  @override
+  State<Home> createState() => _HomeState();
+
+}
+
+class _HomeState extends State<Home> {
+  // bool isLandscape = true;
+  LocalDatabse mydb = LocalDatabse();
+
+  @override
+  void initState()  {
+    super.initState();
+    try {
+       print('trying to initialize');
+       mydb.initialize();
+       print('trying to initialize');
+    } catch(e) {
+       print('Db initlizaiton error');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
+    // if(isLandscape) return LandscapeHome();
+
     return Template(
       title: "Home",
       child: Column(
@@ -50,27 +79,44 @@ class Home extends StatelessWidget {
 
           /// List of Friends
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(8),
-              itemCount: 10,
-              itemBuilder: (BuildContext context, int index) {
-                return Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/giftsList',
-                        arguments: 'args',
+
+            child: FutureBuilder(
+              future: mydb.readData("SELECT * FROM 'USERS'"),
+              builder: (BuildContext, snapshot){
+                if(snapshot.hasData && snapshot.data !=null) {
+                  List friends = (snapshot.data as List)
+                    .map((item) => Map.from(item))
+                    .toList();
+                  ListView.builder(
+                    padding: const EdgeInsets.all(8),
+                    itemCount: friends.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/giftsList',
+                              arguments: 'args',
+                            );
+                          },
+                          title: Text("Mariam Essam"),
+                          subtitle: Text("Upcoming Events: 1"),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
+                          ),
+                        ),
                       );
                     },
-                    title: Text("Mariam Essam"),
-                    subtitle: Text("Upcoming Events: 1\n +201213333"),
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
-                    ),
-                  ),
-                );
+                  );
+                }
+                else if(snapshot.hasError) {
+                return Text("No friends yet.");
+                }
+
+                return CircularProgressIndicator();
+
               },
             ),
           ),
@@ -79,7 +125,9 @@ class Home extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/addFriendFrom');
+              },
               child: const Text("Add Friend Manually"),
             ),
           ),

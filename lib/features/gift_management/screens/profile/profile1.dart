@@ -17,6 +17,9 @@ class Profile1 extends StatefulWidget {
 class _TestState extends State<Profile1> {
   bool _notification = false;
 
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Template(
@@ -41,7 +44,9 @@ class _TestState extends State<Profile1> {
                       initialValue: "Dumy Name",
                       readOnly: false,
                       labelText: "Name",
-                      prefixIcon: const Icon(Icons.category_outlined)),
+                      prefixIcon: const Icon(Icons.category_outlined),
+                      controller: name,
+                  ),
                   const SizedBox(height: 16),
                   SizedBox(height: MyTheme.sizeBtwnSections),
 
@@ -50,7 +55,9 @@ class _TestState extends State<Profile1> {
                       initialValue: "Dumy Email Value",
                       readOnly: false,
                       labelText: "Email",
-                      prefixIcon: const Icon(Icons.email_outlined)),
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      controller: email,
+                  ),
                   SizedBox(height: MyTheme.sizeBtwnSections),
 
                   /// Notification Prefrence

@@ -9,9 +9,20 @@ class InputField extends StatefulWidget {
   final String labelText;
   final bool readOnly;
   final Icon prefixIcon;
-  final String initialValue;
+  final String? initialValue;
+  final bool obscureText;
+  final TextEditingController? controller;
+  String? Function(String?)? validator;
 
-  InputField({super.key, required this.initialValue, required this.readOnly, required this.labelText, required this.prefixIcon});
+  InputField({super.key,
+    this.initialValue,
+    required this.readOnly,
+    required this.labelText,
+    required this.prefixIcon,
+    this.obscureText = false,
+    this.controller,
+    this.validator
+  });
 
   @override
   State<InputField> createState() => _InputFieldState();
@@ -32,6 +43,13 @@ class _InputFieldState extends State<InputField> {
         child: TextFormField(
           initialValue: widget.initialValue,
           readOnly: widget.readOnly,
+          obscureText: widget.obscureText,
+          controller: widget.controller,
+          validator: widget.validator ?? (value) {
+            if(value == null || value.isEmpty)
+              return ('Field cannot be empty');
+            return null;
+      },
           decoration: InputDecoration(
               prefixIcon: widget.prefixIcon,
               prefixIconColor: _clr,
