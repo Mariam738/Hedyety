@@ -35,6 +35,20 @@ class Template extends StatelessWidget {
             ),
             onTap: () {},
           ),
+
+          ListTile(
+            title: Text(
+              'My Events',
+              style: TextStyle(color: MyTheme.primary),
+            ),
+            leading: Icon(
+              Icons.event,
+            ),
+            onTap: () {
+              Navigator.pushNamed(context, '/eventsList');
+
+            },
+          ),
           ListTile(
             title: Text(
               'My Pledged Gifts',

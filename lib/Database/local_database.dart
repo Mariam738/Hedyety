@@ -4,7 +4,7 @@ import 'package:path/path.dart';
 class LocalDatabse {
   static Database? _localDb;
 
-  Future<Database?> get localDatabase  async {
+  Future<Database?> get localDatabase async {
     if (_localDb == null) {
       _localDb = await initialize();
       return _localDb;
@@ -16,18 +16,44 @@ class LocalDatabse {
   int Version = 1;
 
   initialize() async {
-    String dbPath  = await getDatabasesPath();
-    String path = join(dbPath , 'myLocalDb.db');
-    Database db = await openDatabase(path, version: Version,
-        onCreate: (db, Version) async {
-          db.execute('''CREATE TABLE IF NOT EXISTS 'USERS' (
+    String dbPath = await getDatabasesPath();
+    String path = join(dbPath, 'myLocalDb.db');
+    Database db =
+        await openDatabase(path, version: Version, onConfigure: (db) async {
+      await db.execute("PRAGMA foreign_keys = ON");
+    }, onCreate: (db, Version) async {
+      db.execute('''CREATE TABLE IF NOT EXISTS 'USERS' (
       'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-      'NAME' TEXT NOT NULL,
-      'COMPANY-NAME' TEXT NOT NULL,
-      'EMAIL' TEXT NOT NULL)
+      'NAME' TEXT,
+      'EMAIL' TEXT,
+      'PHONE' TEXT)
       ''');
-          print("Database has been created .......");
-        });
+
+      db.execute('''CREATE TABLE IF NOT EXISTS 'EVENTS' (
+      'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      'NAME' TEXT,
+      'DATE' TEXT,
+      'LOCATION' TEXT,
+      'DESCRIPTION' TEXT,
+      'USERID' INTEGER,
+      FOREIGN KEY(USERID) REFERENCES USERS(ID)
+       )
+      ''');
+
+      db.execute('''CREATE TABLE IF NOT EXISTS 'GIFTS' (
+      'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      'NAME' TEXT,
+      'DESCRIPTION' TEXT,
+      'CATEGORY' TEXT,
+      'PRICE' TEXT,
+       'STATUS' TEXT,
+      'EVENTSID' INTEGER,
+      FOREIGN KEY(EVENTSID) REFERENCES EVENTS(ID)
+       )
+      ''');
+
+      print("Database has been created .......");
+    });
     return db;
   }
 

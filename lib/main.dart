@@ -51,11 +51,14 @@ class MyApp extends StatelessWidget{
 
               '/eventsList': (context) => EventsList(isFriend: false),
               '/friendEventsList': (context) => EventsList(isFriend: true),
+              '/eventForm': (context) => EventForm(),
 
               '/giftsList': (context) => GiftsList(isFriend: false),
               '/friendGiftsList': (context) => GiftsList(isFriend: true),
 
-              '/giftDetails': (context) => GiftDetails(isFriend: false),
+              '/addGiftForm': (context) => GiftDetails(isFriend: false, isAdd: true, isEdit: false,),
+              '/editGiftForm': (context) => GiftDetails(isFriend: false, isAdd: false, isEdit: true),
+              '/giftDetails': (context) => GiftDetails(isFriend: true, isAdd: false, isEdit: true),
 
 
               '/profile': (context) => Profile(),
@@ -68,6 +71,7 @@ class MyApp extends StatelessWidget{
             },
             theme: MyTheme.themeData,
             home: isSignedUp! ? Login() : SignUp(),
+            // home: Home(),
             debugShowCheckedModeBanner: false,
           );
         } else if(snapshot.hasError) {

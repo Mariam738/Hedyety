@@ -76,7 +76,7 @@ class AddFriendForm extends StatelessWidget {
                         // ));
                         try{
                           int response = await mydb.insertData(
-                              '''INSERT INTO 'USERS' ('NAME','COMPANY-NAME','EMAIL') VALUES ("${name.text}","${email.text}","${phone.text}")''');
+                              '''INSERT INTO 'USERS' ('NAME','EMAIL','PHONE') VALUES ("${name.text}","${email.text}","${phone.text}")''');
                           print("the value is $response");
                           // '''INSERT INTO 'BC' ('NAME','COMPANY-NAME','EMAIL') VALUES ("${Name.text}","${CompanyName.text}","${Email.text}")''');
 

@@ -12,9 +12,14 @@ import 'package:hedyety/common/widgets/switch/my_switch.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
+import '../../../../Database/local_database.dart';
+
 class GiftDetails extends StatefulWidget {
-  GiftDetails({super.key, required this.isFriend});
+  GiftDetails({required this.isFriend,required this.isAdd, required this.isEdit });
+
   final bool isFriend;
+  final bool isAdd;
+  final bool isEdit;
 
   @override
   State<GiftDetails> createState() => _GiftDetailsState();
@@ -22,25 +27,41 @@ class GiftDetails extends StatefulWidget {
 
 class _GiftDetailsState extends State<GiftDetails> {
   File? _uploadedImage;
-  bool _pledged = true;
+  bool _pledged = false;
   int? _value = 1;
 
 
-  final key = GlobalKey();
+  LocalDatabse mydb = LocalDatabse();
+
+  final GlobalKey<FormState> key = GlobalKey();
   TextEditingController name = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController category = TextEditingController();
 
 
+
+
   @override
   Widget build(BuildContext context) {
     Color _clr = Colors.black;
+    final Map? args = ModalRoute.of(context)?.settings.arguments as Map?;
+    print('gift details arg: $args');
+    print("pledged $_pledged)");
 
-    return Template(
-      title: "Gift Name Details",
+    bool isEditable = widget.isAdd || widget.isEdit|| _pledged == false;
+    if(widget.isEdit) {
+      name.text = args!['name'];
+      description.text = args!['description'];
+      price.text = args!['price'];
+      category.text = args!['category'];
+      // setState(() {});
+    }
+      return Template(
+      title: "Gift Details",
       child: SingleChildScrollView(
         child: Form(
+          key: key,
           child: Column(
             children: [
               /// Uploaded Image
@@ -48,42 +69,35 @@ class _GiftDetailsState extends State<GiftDetails> {
 
               /// Gift Name Field
               InputField(
-                  initialValue: "Scarf",
-                  readOnly: _pledged,
+                  readOnly: !isEditable,
                   labelText: "Gift Name",
                   prefixIcon: const Icon(CupertinoIcons.gift),
-                  controller: name
-              ),
+                  controller: name),
               const SizedBox(height: 16),
 
               /// Gift Description Field
               InputField(
-                  initialValue: "Dummy value",
-                  readOnly: _pledged,
+                  readOnly: !isEditable,
                   labelText: "Gift Description",
                   prefixIcon: const Icon(Icons.description_outlined),
-                  controller: description
-              ),
+                  controller: description),
               const SizedBox(height: 16),
 
               /// Gift Price Field
               InputField(
-                  initialValue: "Dummy value",
-                  readOnly: _pledged,
-                  labelText: "Gift Price",
-                  prefixIcon: const Icon(CupertinoIcons.money_dollar),
-                  controller: price,
+                readOnly: !isEditable,
+                labelText: "Gift Price",
+                prefixIcon: const Icon(CupertinoIcons.money_dollar),
+                controller: price,
               ),
               const SizedBox(height: 16),
 
               /// Gift Category Field
               InputField(
-                  initialValue: "Dummy value",
-                  readOnly: _pledged,
+                  readOnly: !isEditable,
                   labelText: "Gift Category",
                   prefixIcon: const Icon(Icons.category_outlined),
-                  controller: category
-              ),
+                  controller: category),
               const SizedBox(height: 16),
 
               Wrap(
@@ -121,12 +135,15 @@ class _GiftDetailsState extends State<GiftDetails> {
               //   activeColor: MyTheme.primary,
               //   onChanged: (_) {},
               // ),
-              MySwitch(
-                value: !_pledged,
-                onChanged: (_) {},
-                text: "Status: Pledged. Cannot be modified.",
-                altText: "Status: Available for editing. Not pledged yet.",
-              ),
+              widget.isAdd
+                  ? SizedBox.shrink()
+                  : MySwitch(
+                      value: !_pledged,
+                      onChanged: (_) {},
+                      text: "Status: Pledged. Cannot be modified.",
+                      altText:
+                          "Status: Available for editing. Not pledged yet.",
+                    ),
               const SizedBox(height: 16),
 
               /// Button
@@ -142,6 +159,7 @@ class _GiftDetailsState extends State<GiftDetails> {
                         )
                       : SizedBox.shrink())
                   :
+
                   /// Upload Image
                   SizedBox(
                       width: double.infinity,
@@ -152,6 +170,43 @@ class _GiftDetailsState extends State<GiftDetails> {
                         child: const Text("⬆️ Upload Image 📷"),
                       ),
                     ),
+              const SizedBox(height: 16),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    if (key.currentState!.validate()) {
+                      try {
+                        int res;
+                        if(widget.isAdd) {
+                          res = await mydb.insertData(
+
+                              '''INSERT INTO 'GIFTS' ('NAME','DESCRIPTION', 'CATEGORY', 'PRICE', 'EVENTSID')
+                             VALUES ("${name.text}","${description.text}",
+                             "${category.text}", "${price.text}", "${args!['id']}")''');
+                          print("success adding gift details ");
+                        }
+                        if(widget.isEdit){
+                          res = await mydb.updateData(
+                              '''UPDATE 'GIFTS' SET 
+                              'NAME' = "${name.text}",
+                              'DESCRIPTION' = "${description.text}",
+                              'CATEGORY' = "${category.text}", 
+                              'PRICE' = "${price.text}
+                              WHERE ID= ${args!['id']}"''');
+                          print("the event value is $res");
+                        }
+                        Navigator.pop(context);
+
+                      } catch(e){
+                        print("error adding gift details $e");
+                      }
+                      }
+                  },
+                  child: const Text("💾 Save Gift Data 📌"),
+                ),
+              ),
               const SizedBox(height: 16),
             ],
           ),

@@ -18,16 +18,35 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   // bool isLandscape = true;
   LocalDatabse mydb = LocalDatabse();
+  List myList = [];
+
+  Future readFriends() async{
+    List<Map> res=  await mydb.readData("SELECT * FROM 'USERS'");
+    myList = [];
+    myList.addAll(res);
+    setState(() {
+      print('set state');
+      print(myList);
+    });
+  }
 
   @override
   void initState()  {
     super.initState();
     try {
-       print('trying to initialize');
        mydb.initialize();
        print('trying to initialize');
     } catch(e) {
        print('Db initlizaiton error');
+    }
+    try {
+      // List myList = [];
+      // myList.addAll(res);
+      readFriends();
+      print('tyring to read ${myList}');
+
+    } catch (e){
+      print('unable to read ${e}');
     }
   }
 
@@ -45,7 +64,9 @@ class _HomeState extends State<Home> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/eventForm');
+              },
               child: const Text("Create Your Own Event/List"),
             ),
           ),
@@ -80,17 +101,12 @@ class _HomeState extends State<Home> {
           /// List of Friends
           Expanded(
 
-            child: FutureBuilder(
-              future: mydb.readData("SELECT * FROM 'USERS'"),
-              builder: (BuildContext, snapshot){
-                if(snapshot.hasData && snapshot.data !=null) {
-                  List friends = (snapshot.data as List)
-                    .map((item) => Map.from(item))
-                    .toList();
+            child:
                   ListView.builder(
                     padding: const EdgeInsets.all(8),
-                    itemCount: friends.length,
+                    itemCount: myList.length,
                     itemBuilder: (context, index) {
+                      if(index == 0) return SizedBox.shrink();
                       return Card(
                         child: ListTile(
                           onTap: () {
@@ -100,8 +116,8 @@ class _HomeState extends State<Home> {
                               arguments: 'args',
                             );
                           },
-                          title: Text("Mariam Essam"),
-                          subtitle: Text("Upcoming Events: 1"),
+                          title: Text("${myList[index]['NAME']}"),
+                          subtitle: Text("Upcoming Events: 1\n${myList[index]['PHONE']}"),
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(
                                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
@@ -109,17 +125,9 @@ class _HomeState extends State<Home> {
                         ),
                       );
                     },
-                  );
-                }
-                else if(snapshot.hasError) {
-                return Text("No friends yet.");
-                }
-
-                return CircularProgressIndicator();
-
-              },
+                  ),
             ),
-          ),
+
 
           /// Add Friend Manually Button
           SizedBox(

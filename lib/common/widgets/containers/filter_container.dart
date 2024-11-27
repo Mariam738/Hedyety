@@ -95,14 +95,13 @@ class _FilteContainerState extends State<FilteContainer> {
           ),
           const SizedBox(height: 16),
           // Sort by Status
+          const Text(
+            'Sort By Status:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Sort By Status:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 16),
               MultiSelectChipField(
                       selectedChipColor: MyTheme.primary,
                       selectedTextStyle: TextStyle(color: Colors.white),
@@ -118,8 +117,7 @@ class _FilteContainerState extends State<FilteContainer> {
                       onTap: (val) {
                         _selectedStatus = val;
                       },
-                    )
-        
+                    ),
             ],
           ),
 

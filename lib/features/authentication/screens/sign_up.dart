@@ -8,10 +8,13 @@ import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/features/authentication/screens/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Database/local_database.dart';
+
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
 
+  LocalDatabse mydb = LocalDatabse();
 
   saveData() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -19,6 +22,15 @@ class SignUp extends StatelessWidget {
     pref.setString('email', email.text);
     var digest = sha512.convert(utf8.encode(password.text));
     pref.setString('password',digest.toString());
+
+    try{
+      int response = await mydb.insertData(
+          '''INSERT INTO 'USERS' ('NAME','EMAIL') VALUES ("${username.text}","${email.text}")''');
+      print("the value is $response");
+
+    } catch(e) {
+      print("Error adding user :(" + e.toString());
+    }
   }
 
   final GlobalKey<FormState> key = GlobalKey();
