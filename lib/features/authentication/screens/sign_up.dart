@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:hedyety/Database/auth_service.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
 import 'package:hedyety/constants/constants.dart';
@@ -9,7 +10,6 @@ import 'package:hedyety/features/authentication/screens/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Database/local_database.dart';
-
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
@@ -21,14 +21,13 @@ class SignUp extends StatelessWidget {
     pref.setString('username', username.text);
     pref.setString('email', email.text);
     var digest = sha512.convert(utf8.encode(password.text));
-    pref.setString('password',digest.toString());
+    pref.setString('password', digest.toString());
 
-    try{
+    try {
       int response = await mydb.insertData(
           '''INSERT INTO 'USERS' ('NAME','EMAIL') VALUES ("${username.text}","${email.text}")''');
       print("the value is $response");
-
-    } catch(e) {
+    } catch (e) {
       print("Error adding user :(" + e.toString());
     }
   }
@@ -41,10 +40,22 @@ class SignUp extends StatelessWidget {
 
   TextEditingController password = TextEditingController();
 
-
+  final _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
+    _signup() async {
+      if (key.currentState!.validate()) {
+        // Form is valid
+        final user = await _auth.signUp(email.text, password.text);
+        if(user != null){
+          print("successfult sign up");
+          saveData();
+          Navigator.pushReplacementNamed(context, '/login');
+        }
+      }
+    }
+
     return Template(
       title: "Signup",
       child: SingleChildScrollView(
@@ -88,13 +99,7 @@ class SignUp extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (key.currentState!.validate()) {
-                        // Form is valid
-                        saveData();
-                        Navigator.pushReplacementNamed(context, '/login');
-                      }
-                    },
+                    onPressed: _signup,
                     child: const Text("✍ Sign Up ⬆️ "),
                   ),
                 ),

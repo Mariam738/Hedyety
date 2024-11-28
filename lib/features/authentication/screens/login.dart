@@ -7,6 +7,7 @@ import 'package:hedyety/common/widgets/template/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 
+import '../../../Database/auth_service.dart';
 import '../../../constants/constants.dart';
 
 
@@ -41,8 +42,30 @@ class _LoginState extends State<Login> {
     super.initState();
   }
 
+  final _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
+    _login() async {
+      try {
+        final user = _auth.loginIn(email2.text, password2.text);
+        if (user != null) {
+          print("loged in");
+          Navigator.pushReplacementNamed(context, '/home');
+      }
+      } catch(e) {
+        // NO internet used shared prefrence instead
+        email2.text == emailPref
+            && sha512.convert(utf8.encode(password2.text)).toString() ==
+            passwordHashPref ?
+        Navigator.pushReplacementNamed(context, '/home') :
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('Wrong Email or Password')
+        ));
+      }
+
+    }
+
     return Template(
       title: "Login",
       child: SingleChildScrollView(
@@ -86,12 +109,7 @@ class _LoginState extends State<Login> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (loginKey.currentState!.validate()) {
-                        email2.text == emailPref
-                            && sha512.convert(utf8.encode(password2.text)).toString() == passwordHashPref ?
-                        Navigator.pushReplacementNamed(context, '/home') :
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: const Text('Wrong Email or Password')
-                        ));
+                        _login();
                     }
                     },
                     child: const Text("🔓 Log In ➡️ "),
