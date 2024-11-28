@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/template/landscape_template.dart';
 import 'package:hedyety/features/authentication/screens/login.dart';
@@ -19,7 +20,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Database/local_database.dart';
 
+void init() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+}
+
 void main() {
+  init();
   runApp(MyApp());
 }
 

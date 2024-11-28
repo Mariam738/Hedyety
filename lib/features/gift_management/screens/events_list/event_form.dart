@@ -9,11 +9,14 @@ class EventForm extends StatelessWidget {
 
   LocalDatabse mydb = LocalDatabse();
 
-  final GlobalKey<FormState> key = GlobalKey();
+  final GlobalKey<FormState> key =  GlobalKey<FormState>();
   TextEditingController name = TextEditingController();
   TextEditingController date = TextEditingController();
   TextEditingController location = TextEditingController();
   TextEditingController description = TextEditingController();
+
+  EventForm({super.key});
+
 
 
   @override

@@ -96,6 +96,7 @@ class _EventsListState extends State<EventsList> {
                                   icon: Icon(Icons.edit),
                                   color: MyTheme.editButtonColor,
                                   onPressed: () {
+                                    try{
                                     Navigator.pushNamed(context, '/eventForm',
                                         arguments: {
                                           "id": myList[index]['ID'],
@@ -106,6 +107,9 @@ class _EventsListState extends State<EventsList> {
                                               ['DESCRIPTION'],
                                           "user": myList[index]['USERID'],
                                         });
+                                    } catch(e){
+                                      print("error: ${e}");
+                                    }
                                   },
                                 ),
                                 SizedBox(

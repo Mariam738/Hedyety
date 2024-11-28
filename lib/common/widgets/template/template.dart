@@ -4,12 +4,17 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/my_theme.dart';
 
+import '../../../Database/auth_service.dart';
+
 class Template extends StatelessWidget {
-  const Template(
+  Template(
       {super.key, required this.title, required this.child, this.actions});
   final String title;
   final Widget child;
   final List<Widget>? actions;
+
+  final _auth = AuthService();
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +82,11 @@ class Template extends StatelessWidget {
             leading: Icon(
               Icons.logout,
             ),
-            onTap: () {},
+            onTap: () {
+              _auth.signOut();
+              Navigator.pushNamed(context, '/login');
+
+            },
           ),
         ]),
       ),
