@@ -34,6 +34,18 @@ class _GiftsListState extends State<GiftsList> {
       print("giftslist args: ${args}");
     }
 
+    void navigateToEdit(gift) {
+      Navigator.pushNamed(context, '/editGiftForm',
+          arguments: {
+            "id": gift['ID'],
+            "name": gift['NAME'],
+            "description": gift['DESCRIPTION'],
+            "category": gift['CATEGORY'],
+            "price": gift['PRICE'],
+            "eventid": gift['EVENTSID'],
+          });
+    }
+
     return Template(
       title: "Gifts List",
       actions: [
@@ -83,11 +95,7 @@ class _GiftsListState extends State<GiftsList> {
                             // color: index % 2 ==0 ?Colors.amber : null,
                             child: ListTile(
                               onTap: () {
-                                // Navigator.pushNamed(
-                                //   context,
-                                //   '/giftsList',
-                                //   arguments: 'args',
-                                // );
+                                navigateToEdit(gifts[index]);
                               },
                               title: Text("${gifts[index]['NAME']}"),
                               subtitle: Text(
@@ -107,15 +115,7 @@ class _GiftsListState extends State<GiftsList> {
                                       color: MyTheme.editButtonColor,
                                       onPressed: () {
                                         print('pressed $index');
-                                        Navigator.pushNamed(context, '/editGiftForm',
-                                            arguments: {
-                                              "id": gifts[index]['ID'],
-                                              "name": gifts[index]['NAME'],
-                                              "description": gifts[index]['DESCRIPTION'],
-                                              "category": gifts[index]['CATEGORY'],
-                                              "price": gifts[index]['PRICE'],
-                                              "eventid": gifts[index]['EVENTSID'],
-                                            });
+                                        navigateToEdit(gifts[index]);
                                       },
                                     ),
                                     SizedBox(width: 10),

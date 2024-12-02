@@ -5,31 +5,37 @@ import 'package:hedyety/common/widgets/template/template.dart';
 
 import '../../../../Database/local_database.dart';
 
-class EventForm extends StatelessWidget {
 
+class EventForm extends StatelessWidget {
   LocalDatabse mydb = LocalDatabse();
 
   final GlobalKey<FormState> key =  GlobalKey<FormState>();
+
   TextEditingController name = TextEditingController();
+
   TextEditingController date = TextEditingController();
+
   TextEditingController location = TextEditingController();
+
   TextEditingController description = TextEditingController();
-
-  EventForm({super.key});
-
 
 
   @override
   Widget build(BuildContext context) {
-    final Map? args = ModalRoute.of(context)?.settings.arguments as Map?;
+    bool isEdit = false;
+    Map? args = ModalRoute.of(context)?.settings.arguments as Map?;
     int id = 0;
     if(args != null && !args.isEmpty){
-      name.text = args['name'];
+      isEdit = true;
+      name.text =args['name'];
       date.text = args['date'];
       location.text = args['location'];
       description.text = args['description'];
       id = args['id'];
+      print('setting contorller $args');
+      args = null;
     }
+
     return Template(
       title: "Event Form",
       child: SingleChildScrollView(
@@ -81,24 +87,29 @@ class EventForm extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (key.currentState!.validate()) {
+                        key.currentState!.save();
+
                         try {
                           int res;
                           print('args ${args}');
-                          (args == null || args.isEmpty) ?
+                          (isEdit == false ) ?
                             res = await mydb.insertData(
                               '''INSERT INTO 'EVENTS' ('NAME','DATE', 'LOCATION', 'DESCRIPTION', 'USERID')
                              VALUES ("${name.text}","${date.text}",
                              "${location.text}", "${description.text}", 1)''') :
-                          res = await mydb.updateData(
-                              '''UPDATE 'EVENTS' SET 
+                          res = await mydb.updateData('''UPDATE 'EVENTS' SET 
                               'NAME' = "${name.text}",
                               'DATE' = "${date.text}",
                               'LOCATION' = "${location.text}", 
-                              'DESCRIPTION' = "${description.text}
-                              WHERE ID= ${id}"''');
+                              'DESCRIPTION' = "${description.text}"
+                              WHERE ID= "${id}"''');
                           print("the event value is $res");
-                          Navigator.pushReplacementNamed(context, '/home');
+                          // print("controller ${name.text}");
+                          key.currentState!.save();
+                          Navigator.pushReplacementNamed(context,'/eventsList');
+
                         } catch (e) {
+                          print('Error $e');
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: const Text('Error. Sign up or login first')
                           ));

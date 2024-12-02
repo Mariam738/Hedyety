@@ -32,4 +32,8 @@ class AuthService {
       print("error in signOut AuthService ${e}");
     }
   }
-}
+
+  String? getUserId()  {
+    return _auth.currentUser?.uid;
+  }
+ }

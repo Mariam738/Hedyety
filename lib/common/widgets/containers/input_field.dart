@@ -13,6 +13,7 @@ class InputField extends StatefulWidget {
   final bool obscureText;
   final TextEditingController? controller;
   String? Function(String?)? validator;
+  final bool? enabled;
 
   InputField({super.key,
     this.initialValue,
@@ -21,7 +22,8 @@ class InputField extends StatefulWidget {
     required this.prefixIcon,
     this.obscureText = false,
     this.controller,
-    this.validator
+    this.validator,
+    this.enabled = true
   });
 
   @override
@@ -40,6 +42,7 @@ class _InputFieldState extends State<InputField> {
               // print(_clr);
               );
         },
+
         child: TextFormField(
           initialValue: widget.initialValue,
           readOnly: widget.readOnly,

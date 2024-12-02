@@ -39,24 +39,33 @@ class _GiftDetailsState extends State<GiftDetails> {
   TextEditingController price = TextEditingController();
   TextEditingController category = TextEditingController();
 
+  late final Map? args;
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    args = ModalRoute.of(context)?.settings.arguments as Map?;
+    if(widget.isEdit) {
+      name.text = args!['name'];
+      description.text = args!['description'];
+      price.text = args!['price'];
+      _value = MyConstants.categoryList.indexOf(args!['category']);
+
+      print('gifts ${args!['id']}');
+      // setState(() {});
+    }
+  }
 
 
 
   @override
   Widget build(BuildContext context) {
     Color _clr = Colors.black;
-    final Map? args = ModalRoute.of(context)?.settings.arguments as Map?;
-    print('gift details arg: $args');
-    print("pledged $_pledged)");
-
     bool isEditable = widget.isAdd || widget.isEdit|| _pledged == false;
-    if(widget.isEdit) {
-      name.text = args!['name'];
-      description.text = args!['description'];
-      price.text = args!['price'];
-      category.text = args!['category'];
-      // setState(() {});
-    }
+
+
+
       return Template(
       title: "Gift Details",
       child: SingleChildScrollView(
@@ -92,14 +101,7 @@ class _GiftDetailsState extends State<GiftDetails> {
               ),
               const SizedBox(height: 16),
 
-              /// Gift Category Field
-              InputField(
-                  readOnly: !isEditable,
-                  labelText: "Gift Category",
-                  prefixIcon: const Icon(Icons.category_outlined),
-                  controller: category),
-              const SizedBox(height: 16),
-
+              /// Gift Category
               Wrap(
                 spacing: 4,
                 runSpacing: 4,
@@ -107,6 +109,7 @@ class _GiftDetailsState extends State<GiftDetails> {
                   MyConstants.categoryList.length,
                   (int index) {
                     return ChoiceChip(
+
                       label: Text(
                         '${MyConstants.categoryList[index]}',
                         style: TextStyle(
@@ -121,6 +124,12 @@ class _GiftDetailsState extends State<GiftDetails> {
                       onSelected: (bool selected) {
                         setState(() {
                           _value = selected ? index : null;
+                          if(_value !=null) {
+                            print('value $_value ${MyConstants.categoryList[_value!]}');
+                            category.text = MyConstants.categoryList[_value!];
+                            print(category.text);
+                            key.currentState!.save();
+                          }
                         });
                       },
                     );
@@ -192,9 +201,9 @@ class _GiftDetailsState extends State<GiftDetails> {
                               '''UPDATE 'GIFTS' SET 
                               'NAME' = "${name.text}",
                               'DESCRIPTION' = "${description.text}",
-                              'CATEGORY' = "${category.text}", 
-                              'PRICE' = "${price.text}
-                              WHERE ID= ${args!['id']}"''');
+                              'CATEGORY' = "${MyConstants.categoryList[_value!]}", 
+                              'PRICE' = "${price.text}"
+                              WHERE ID= "${args!['id']}"''');
                           print("the event value is $res");
                         }
                         Navigator.pop(context);

@@ -51,6 +51,7 @@ class _LoginState extends State<Login> {
         final user = _auth.loginIn(email2.text, password2.text);
         if (user != null) {
           print("loged in");
+          print('user id: ${_auth.getUserId()}');
           Navigator.pushReplacementNamed(context, '/home');
       }
       } catch(e) {
