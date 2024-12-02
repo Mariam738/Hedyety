@@ -26,7 +26,8 @@ class LocalDatabse {
       'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
       'NAME' TEXT,
       'EMAIL' TEXT,
-      'PHONE' TEXT)
+      'PHONE' TEXT,
+      'PREFERENCE' INTEGER)
       ''');
 
       db.execute('''CREATE TABLE IF NOT EXISTS 'EVENTS' (
@@ -51,6 +52,16 @@ class LocalDatabse {
       FOREIGN KEY(EVENTSID) REFERENCES EVENTS(ID)
        )
       ''');
+
+      db.execute('''CREATE TABLE IF NOT EXISTS 'FRIENDS' (
+      'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      'USERID' INTEGER,
+      'FRIENDID' INTEGER,
+      FOREIGN KEY(USERID) REFERENCES USERS(ID),
+      FOREIGN KEY(FRIENDID) REFERENCES USERS(ID)
+       )
+      ''');
+
 
       print("Database has been created .......");
     });
