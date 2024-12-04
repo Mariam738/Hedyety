@@ -7,7 +7,7 @@ import 'package:hedyety/common/widgets/template/template.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 
-import '../../../../Database/local_database.dart';
+import '../../../../Repository/local_database.dart';
 
 
 class AddFriendForm extends StatelessWidget {
@@ -23,7 +23,7 @@ class AddFriendForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Template(
-      title: "Add 1Friend",
+      title: "Add Friend",
       child: SingleChildScrollView(
         child: Form(
           key: key,

@@ -14,11 +14,12 @@ import 'package:hedyety/features/gift_management/screens/gifts/friend_gift_detai
 import 'package:hedyety/features/gift_management/screens/gifts/gift_details.dart';
 import 'package:hedyety/features/gift_management/screens/gifts/gifts_list.dart';
 import 'package:hedyety/features/gift_management/screens/home/home.dart';
+import 'package:hedyety/main_controller.dart';
 import 'package:hedyety/my_theme.dart';
 import 'package:hedyety/features/gift_management/screens/profile/profile1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'Database/local_database.dart';
+import 'Repository/local_database.dart';
 
 void init() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,27 +32,23 @@ void main() {
 }
 
 
+
 class MyApp extends StatelessWidget{
   // This widget is the root of your application.
-  late bool isSignedUp;
 
+  MainController controller = MainController();  
 
-
-  Future loadData() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    isSignedUp =   (pref.getString('email') !=null &&
-        pref.getString('password') != null);
-    return isSignedUp;
-  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: loadData(),
+      future: controller.loadData(),
       builder: (BuildContext, snapshot){
         if(snapshot.hasData && snapshot.data != null) {
           return MaterialApp(
             title: 'Flutter Demo',
+            navigatorKey: MainController.navigatorKey,
+            scaffoldMessengerKey: MainController.msngrKey,
             // initialRoute: home,
             routes: {
               '/home': (context) => Home(),
@@ -77,14 +74,14 @@ class MyApp extends StatelessWidget{
               '/addFriendFrom': (context) => AddFriendForm(),
             },
             theme: MyTheme.themeData,
-            home: isSignedUp! ? Login() : SignUp(),
+            home: controller.isSignedUp! ? Login() : SignUp(),
             // home: Home(),
             debugShowCheckedModeBanner: false,
           );
         } else if(snapshot.hasError) {
           return Text("Error");
         }
-        return CircularProgressIndicator();
+        return Center(child: CircularProgressIndicator());
       }
     );
   }

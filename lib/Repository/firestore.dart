@@ -1,9 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class Firestore {
+class Firebase {
+  final FirebaseDatabase _fb = FirebaseDatabase.instance;
 
+  Future<void> addUser(Map<String, dynamic> usr, String uid) async {
+    await _fb.ref('/users/$uid').set(usr);
+  }
+
+  Future<void> addPhoneUser(Map<String, String> phone,String uid) async {
+      await _fb.ref('/phones/$uid').set(phone);
+  }
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
-  FirebaseFirestore.instance.Settings = Settings(persistanceEnabled: tur)
+  // FirebaseFirestore.instance.Settings = Settings(persistanceEnabled: tur)
   //
   // Future<void> addUser(name, email, phone) async {
   //   await _fires.collection('users').add({

@@ -41,7 +41,6 @@ class _TestState extends State<Profile1> {
                 children: [
                   /// Name
                   InputField(
-                      initialValue: "Dumy Name",
                       readOnly: false,
                       labelText: "Name",
                       prefixIcon: const Icon(Icons.category_outlined),
@@ -52,7 +51,6 @@ class _TestState extends State<Profile1> {
 
                   /// Email
                   InputField(
-                      initialValue: "Dumy Email Value",
                       readOnly: false,
                       labelText: "Email",
                       prefixIcon: const Icon(Icons.email_outlined),

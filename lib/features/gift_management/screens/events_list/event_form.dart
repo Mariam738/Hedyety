@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
 
-import '../../../../Database/local_database.dart';
+import '../../../../Repository/local_database.dart';
 
 
 class EventForm extends StatelessWidget {

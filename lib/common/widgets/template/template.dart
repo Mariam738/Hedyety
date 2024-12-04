@@ -1,20 +1,26 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hedyety/common/widgets/template/template_controller.dart';
 import 'package:hedyety/my_theme.dart';
 
-import '../../../Database/auth_service.dart';
+import '../../../Repository/auth_service.dart';
 
 class Template extends StatelessWidget {
   Template(
-      {super.key, required this.title, required this.child, this.actions});
+      {super.key,
+      required this.title,
+      required this.child,
+      this.actions,
+      this.showDrawer = true});
+
   final String title;
   final Widget child;
   final List<Widget>? actions;
+  final bool? showDrawer;
 
-  final _auth = AuthService();
-
+  TemplateController controller = TemplateController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,73 +29,106 @@ class Template extends StatelessWidget {
         title: Text('$title'),
         actions: actions,
       ),
-      drawer: Drawer(
-        child: ListView(children: [
-          // DrawerHeader(
-          //   decoration: BoxDecoration(color: MyTheme.primary),
-          //   child: CircleAvatar(backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
-          //   radius: 20,),
-          // ),
-          ListTile(
-            title: Text(
-              'Home',
-              style: TextStyle(color: MyTheme.primary),
+      drawer: showDrawer == true
+          ? Drawer(
+              child: ListView(children: [
+                // DrawerHeader(
+                //   decoration: BoxDecoration(color: MyTheme.primary),
+                //   child: CircleAvatar(backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
+                //   radius: 20,),
+                // ),
+                ListTile(
+                  title: Text(
+                    'Home',
+                    style: TextStyle(color: MyTheme.primary),
+                  ),
+                  leading: Icon(
+                    Icons.home,
+                  ),
+                  onTap: () {
+                    controller.goToHome();
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'My Events',
+                    style: TextStyle(color: MyTheme.primary),
+                  ),
+                  leading: Icon(
+                    Icons.event,
+                  ),
+                  onTap: () {
+                    controller.goToEventsList();
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'My Pledged Gifts',
+                    style: TextStyle(color: MyTheme.primary),
+                  ),
+                  leading: Icon(
+                    Icons.handshake,
+                  ),
+                  onTap: () {
+                    controller.goToMyPledgedGifts();
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'Profile',
+                    style: TextStyle(color: MyTheme.primary),
+                  ),
+                  leading: Icon(
+                    Icons.person,
+                  ),
+                  onTap: () {
+                    controller.goToProfile();
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'Log Out',
+                    style: TextStyle(color: MyTheme.primary),
+                  ),
+                  leading: Icon(
+                    Icons.logout,
+                  ),
+                  onTap: () {
+                    controller.signout();
+                  },
+                ),
+              ]),
+            )
+          : Drawer(
+              child: ListView(
+                children: [
+                  ListTile(
+                    title: Text(
+                      'Sign up',
+                      style: TextStyle(color: MyTheme.primary),
+                    ),
+                    leading: Icon(
+                      Icons.app_registration,
+                    ),
+                    onTap: () {
+                      controller.goToSignUp();
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Login',
+                      style: TextStyle(color: MyTheme.primary),
+                    ),
+                    leading: Icon(
+                      Icons.login,
+                    ),
+                    onTap: () {
+                      controller.goToLogin();
+                    },
+                  ),
+                ],
+              ),
             ),
-            leading: Icon(
-              Icons.home,
-            ),
-            onTap: () {},
-          ),
-
-          ListTile(
-            title: Text(
-              'My Events',
-              style: TextStyle(color: MyTheme.primary),
-            ),
-            leading: Icon(
-              Icons.event,
-            ),
-            onTap: () {
-              Navigator.pushNamed(context, '/eventsList');
-
-            },
-          ),
-          ListTile(
-            title: Text(
-              'My Pledged Gifts',
-              style: TextStyle(color: MyTheme.primary),
-            ),
-            leading: Icon(
-              Icons.handshake,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text(
-              'Profile',
-              style: TextStyle(color: MyTheme.primary),
-            ),
-            leading: Icon(
-              Icons.person,
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            title: Text(
-              'Log Out',
-              style: TextStyle(color: MyTheme.primary),
-            ),
-            leading: Icon(
-              Icons.logout,
-            ),
-            onTap: () {
-              _auth.signOut();
-              Navigator.pushNamed(context, '/login');
-
-            },
-          ),
-        ]),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: child,

@@ -2,65 +2,29 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-import 'package:hedyety/Database/auth_service.dart';
+import 'package:hedyety/Repository/auth_service.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
 import 'package:hedyety/constants/constants.dart';
+import 'package:hedyety/features/authentication/controllers/signup_controller.dart';
 import 'package:hedyety/features/authentication/screens/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../Database/local_database.dart';
+import '../../../Repository/local_database.dart';
 
 class SignUp extends StatelessWidget {
   SignUp({super.key});
 
-  LocalDatabse mydb = LocalDatabse();
-
-  saveData() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    pref.setString('username', username.text);
-    pref.setString('email', email.text);
-    var digest = sha512.convert(utf8.encode(password.text));
-    pref.setString('password', digest.toString());
-
-    try {
-      int response = await mydb.insertData(
-          '''INSERT INTO 'USERS' ('NAME','EMAIL') VALUES ("${username.text}","${email.text}")''');
-      print("the value is $response");
-    } catch (e) {
-      print("Error adding user :(" + e.toString());
-    }
-  }
-
-  final GlobalKey<FormState> key = GlobalKey();
-
-  TextEditingController username = TextEditingController();
-
-  TextEditingController email = TextEditingController();
-
-  TextEditingController password = TextEditingController();
-
-  final _auth = AuthService();
+  SignupController controller = SignupController(); 
 
   @override
   Widget build(BuildContext context) {
-    _signup() async {
-      if (key.currentState!.validate()) {
-        // Form is valid
-        final user = await _auth.signUp(email.text, password.text);
-        if(user != null){
-          print("successfult sign up");
-          saveData();
-          Navigator.pushReplacementNamed(context, '/login');
-        }
-      }
-    }
-
     return Template(
+      showDrawer: false,
       title: "Signup",
       child: SingleChildScrollView(
         child: Form(
-          key: key,
+          key: controller.key,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -70,7 +34,7 @@ class SignUp extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(Icons.person),
                   labelText: "Username",
-                  controller: username,
+                  controller: controller.username,
                   // validator:
                 ),
                 const SizedBox(height: 16),
@@ -80,8 +44,17 @@ class SignUp extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(Icons.mail),
                   labelText: "Email",
-                  controller: email,
+                  controller: controller.email,
                   validator: MyConstants.emailValidator,
+                ),
+                const SizedBox(height: 16),
+
+                /// Phone
+                InputField(
+                  readOnly: false,
+                  prefixIcon: const Icon(Icons.phone),
+                  labelText: "Phone",
+                  controller: controller.phone,
                 ),
                 const SizedBox(height: 16),
 
@@ -91,7 +64,7 @@ class SignUp extends StatelessWidget {
                   prefixIcon: const Icon(Icons.password),
                   labelText: "Password",
                   obscureText: true,
-                  controller: password,
+                  controller: controller.password,
                 ),
                 const SizedBox(height: 16),
 
@@ -99,7 +72,7 @@ class SignUp extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _signup,
+                    onPressed: controller.signup,
                     child: const Text("✍ Sign Up ⬆️ "),
                   ),
                 ),

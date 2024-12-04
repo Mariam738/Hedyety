@@ -11,16 +11,15 @@ class MyTheme {
   // Constats
   static double sizeBtwnSections = 16.0;
 
-
   // ThemeData
   static ThemeData themeData = ThemeData(
-    useMaterial3: true,
-    elevatedButtonTheme: elevatedButtonTheme,
-    outlinedButtonTheme: outlinedButtonTheme,
-    appBarTheme: appBarTheme,
-    primarySwatch: Colors.red,
-    
-  );
+      useMaterial3: true,
+      elevatedButtonTheme: elevatedButtonTheme,
+      outlinedButtonTheme: outlinedButtonTheme,
+      appBarTheme: appBarTheme,
+      primarySwatch: Colors.red,
+      textSelectionTheme:
+          TextSelectionThemeData(selectionHandleColor: MyTheme.primary, selectionColor: MyTheme.primary.withOpacity(0.4)));
 
   static ElevatedButtonThemeData elevatedButtonTheme = ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
@@ -41,9 +40,8 @@ class MyTheme {
     ),
   );
 
-   static AppBarTheme appBarTheme= AppBarTheme(
-    backgroundColor: Colors.red.shade900,
-    titleTextStyle: const TextStyle(color: Colors.white, fontSize: 16),
-    foregroundColor: Colors.white
-  );
+  static AppBarTheme appBarTheme = AppBarTheme(
+      backgroundColor: Colors.red.shade900,
+      titleTextStyle: const TextStyle(color: Colors.white, fontSize: 16),
+      foregroundColor: Colors.white);
 }

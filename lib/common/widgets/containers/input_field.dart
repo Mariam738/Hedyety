@@ -44,6 +44,8 @@ class _InputFieldState extends State<InputField> {
         },
 
         child: TextFormField(
+          
+          cursorColor: MyTheme.primary,
           initialValue: widget.initialValue,
           readOnly: widget.readOnly,
           obscureText: widget.obscureText,

@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "787583930660",
-    "project_id": "hedyety-1c422",
-    "storage_bucket": "hedyety-1c422.firebasestorage.app"
+    "project_number": "137707352143",
+    "firebase_url": "https://hedyety-ff4c2-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "hedyety-ff4c2",
+    "storage_bucket": "hedyety-ff4c2.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:787583930660:android:0933dc0decb9feb916a3b1",
+        "mobilesdk_app_id": "1:137707352143:android:83a1efe50913f3a9bbba3a",
         "android_client_info": {
           "package_name": "com.example.hedyety"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDB2WFAR_-lJGjsmLU4RQCQH2AaLUDIj6E"
+          "current_key": "AIzaSyA4GXYppGSXkdU2lAbSS5cuqqh21KCtWsc"
         }
       ],
       "services": {

@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -53,10 +50,22 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDB2WFAR_-lJGjsmLU4RQCQH2AaLUDIj6E',
-    appId: '1:787583930660:android:0933dc0decb9feb916a3b1',
-    messagingSenderId: '787583930660',
-    projectId: 'hedyety-1c422',
-    storageBucket: 'hedyety-1c422.firebasestorage.app',
+    apiKey: 'AIzaSyA4GXYppGSXkdU2lAbSS5cuqqh21KCtWsc',
+    appId: '1:137707352143:android:83a1efe50913f3a9bbba3a',
+    messagingSenderId: '137707352143',
+    projectId: 'hedyety-ff4c2',
+    databaseURL: 'https://hedyety-ff4c2-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'hedyety-ff4c2.firebasestorage.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCey7Z4AN5b6xrJvqMRUxfMeFNB_F8wGZk',
+    appId: '1:137707352143:web:0c906f8db0881ef2bbba3a',
+    messagingSenderId: '137707352143',
+    projectId: 'hedyety-ff4c2',
+    authDomain: 'hedyety-ff4c2.firebaseapp.com',
+    databaseURL: 'https://hedyety-ff4c2-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'hedyety-ff4c2.firebasestorage.app',
+  );
+
 }

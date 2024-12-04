@@ -7,7 +7,7 @@ import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/my_theme.dart';
 import 'package:hedyety/common/widgets/containers/filter_container.dart';
 
-import '../../../../Database/local_database.dart';
+import '../../../../Repository/local_database.dart';
 
 class GiftsList extends StatefulWidget {
   GiftsList({super.key, required this.isFriend});

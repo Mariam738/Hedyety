@@ -12,7 +12,7 @@ import 'package:hedyety/common/widgets/switch/my_switch.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 
-import '../../../../Database/local_database.dart';
+import '../../../../Repository/local_database.dart';
 
 class GiftDetails extends StatefulWidget {
   GiftDetails({required this.isFriend,required this.isAdd, required this.isEdit });
