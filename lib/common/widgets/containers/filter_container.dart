@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/constants/constants.dart';
+import 'package:hedyety/features/gift_management/screens/events_list/events_list_controller.dart';
+import 'package:hedyety/features/gift_management/screens/gifts/gifts_list_controller.dart';
 import 'package:hedyety/features/gift_management/screens/gifts/my_pledge_gifts.dart';
+import 'package:hedyety/main_controller.dart';
 import 'package:hedyety/my_theme.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 
@@ -19,10 +22,19 @@ class FilteContainer extends StatefulWidget {
 }
 
 class _FilteContainerState extends State<FilteContainer> {
+
+  var controller;
+
   bool isAscending = true;
   List _selectedCategories = [];
   List _selectedStatus = [];
   int _value = 1;
+
+  @override
+  initState(){
+    super.initState();
+    controller = widget.isEvent == true ? EventsListController() : GiftsListController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +64,7 @@ class _FilteContainerState extends State<FilteContainer> {
                     onChanged: (val) {
                       setState(() {
                         isAscending = val!;
+                        print('filtering $isAscending');
                       });
                     }),
                 const Text('Descending'),
@@ -61,6 +74,7 @@ class _FilteContainerState extends State<FilteContainer> {
                     onChanged: (val) {
                       setState(() {
                         isAscending = !val!;
+                                                print('filtering $isAscending');
                       });
                     }),
                 const SizedBox(height: 16),
@@ -89,7 +103,9 @@ class _FilteContainerState extends State<FilteContainer> {
                       .map((e) => MultiSelectItem(e, e))
                       .toList(),
                   onTap: (val) {
-                    _selectedCategories = val;
+                    _selectedCategories = val;                        
+                    print('filtering $_selectedCategories');
+
                   },
                 ),
               ],
@@ -117,6 +133,8 @@ class _FilteContainerState extends State<FilteContainer> {
                             statusList.map((e) => MultiSelectItem(e, e)).toList(),
                         onTap: (val) {
                           _selectedStatus = val;
+                                              print('filtering $_selectedStatus');
+
                         },
                       ),
               ],
@@ -127,7 +145,10 @@ class _FilteContainerState extends State<FilteContainer> {
             SizedBox(
               width: MediaQuery.sizeOf(context).width * 0.4,
               child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                // onPressed: () {print('filter pressed');},
+                  onPressed: () async{
+                     controller.filter(isAscending, _selectedCategories, _selectedStatus) ;
+                  }, //() {=> Navigator.pop(context)},
                   child: const Text('Sort')),
             )
           ],

@@ -2,47 +2,56 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
+import 'package:hedyety/constants/constants.dart';
+import 'package:hedyety/features/gift_management/screens/events_list/event_form_controller.dart';
+import 'package:hedyety/my_theme.dart';
 
 import '../../../../Repository/local_database.dart';
 
+class EventForm extends StatefulWidget {
+  EventForm({super.key, required this.isEdit});
 
-class EventForm extends StatelessWidget {
-  LocalDatabse mydb = LocalDatabse();
+  final bool isEdit;
+  
 
-  final GlobalKey<FormState> key =  GlobalKey<FormState>();
+  @override
+  State<EventForm> createState() => _EventFormState();
+}
 
-  TextEditingController name = TextEditingController();
-
-  TextEditingController date = TextEditingController();
-
-  TextEditingController location = TextEditingController();
-
-  TextEditingController description = TextEditingController();
-
+class _EventFormState extends State<EventForm> {
+  EventFormController controller = EventFormController();
+  bool isSet = false;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+     if (widget.isEdit == true && isSet == false) {
+      isSet = true;
+      Map? args = ModalRoute.of(context)?.settings.arguments as Map?;
+      if (args != null && !args.isEmpty) {
+        controller.isEdit = true;
+        controller.name.text = args['name'];
+        controller.date.text = args['date'];
+        controller.location.text = args['location'];
+        controller.description.text = args['description'];
+        controller.category.text = args['category'];
+        controller.id = args['id'];
+        controller.value = MyConstants.eventsList.indexWhere((e) =>  e== args!['category']);
+        print('setting contorller $args');
+        args = null;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool isEdit = false;
-    Map? args = ModalRoute.of(context)?.settings.arguments as Map?;
-    int id = 0;
-    if(args != null && !args.isEmpty){
-      isEdit = true;
-      name.text =args['name'];
-      date.text = args['date'];
-      location.text = args['location'];
-      description.text = args['description'];
-      id = args['id'];
-      print('setting contorller $args');
-      args = null;
-    }
-
+   
     return Template(
       title: "Event Form",
       child: SingleChildScrollView(
         child: Form(
-          key: key,
+          key: controller.key,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
+            
             child: Column(
               children: [
                 /// Event Name
@@ -50,7 +59,7 @@ class EventForm extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(CupertinoIcons.pen),
                   labelText: "Event Name",
-                  controller: name,
+                  controller: controller.name,
                 ),
                 const SizedBox(height: 16),
 
@@ -59,7 +68,7 @@ class EventForm extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(Icons.date_range),
                   labelText: "Date",
-                  controller: date,
+                  controller: controller.date,
                 ),
                 const SizedBox(height: 16),
 
@@ -68,7 +77,7 @@ class EventForm extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(Icons.location_on),
                   labelText: "Location",
-                  controller: location,
+                  controller: controller.location,
                 ),
                 const SizedBox(height: 16),
 
@@ -77,45 +86,59 @@ class EventForm extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(Icons.description),
                   labelText: "Description",
-                  controller: description,
+                  controller: controller.description,
                 ),
                 const SizedBox(height: 16),
 
-                /// Sign In Button
+                /// Event Category
+              Wrap(
+                spacing: 4,
+                runSpacing: 4,
+                children: List<Widget>.generate(
+                  MyConstants.eventsList.length,
+                  (int index) {
+                    return ChoiceChip(
+
+                      label: Text(
+                        '${MyConstants.eventsList[index]}',
+                        style: TextStyle(
+                            color:
+                                index == controller.value ? Colors.white : Colors.black),
+                      ),
+                      selected: controller.value != null ? controller.value == index : false,
+                      selectedColor: MyTheme.primary,
+                      
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          side: BorderSide(color: MyTheme.primary)),
+                        
+                          
+                      onSelected: (bool selected) {
+                        setState(() {
+                          controller.value = selected ? index : null;
+                          if(controller.value !=null) {
+                            print('value $controller.value ${MyConstants.eventsList[controller.value!]}');
+                            controller.category.text = MyConstants.eventsList[controller.value!];
+                            print(controller.category.text);
+                            controller.key.currentState!.save();
+                          }
+                        });
+                      },
+                      
+                    );
+                  },
+                ).toList(),
+              ),
+              const SizedBox(height: 16),
+
+
+                /// Save Event Button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if (key.currentState!.validate()) {
-                        key.currentState!.save();
-
-                        try {
-                          int res;
-                          print('args ${args}');
-                          (isEdit == false ) ?
-                            res = await mydb.insertData(
-                              '''INSERT INTO 'EVENTS' ('NAME','DATE', 'LOCATION', 'DESCRIPTION', 'USERID')
-                             VALUES ("${name.text}","${date.text}",
-                             "${location.text}", "${description.text}", 1)''') :
-                          res = await mydb.updateData('''UPDATE 'EVENTS' SET 
-                              'NAME' = "${name.text}",
-                              'DATE' = "${date.text}",
-                              'LOCATION' = "${location.text}", 
-                              'DESCRIPTION' = "${description.text}"
-                              WHERE ID= "${id}"''');
-                          print("the event value is $res");
-                          // print("controller ${name.text}");
-                          key.currentState!.save();
-                          Navigator.pushReplacementNamed(context,'/eventsList');
-
-                        } catch (e) {
-                          print('Error $e');
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: const Text('Error. Sign up or login first')
-                          ));
-                          print("Error adding event :(" + e.toString());
-                        }
-                      }
+                    onPressed: () {
+                      controller.key.currentState!.save();
+                      controller.saveEvent();
                     },
                     child: const Text("💾 Save Event Data 📌"),
                   ),

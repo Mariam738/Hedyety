@@ -10,6 +10,10 @@
 analyzer:
   errors:
     prefer_const_constructors: ignore
+    annotate_overrides: ignore
+    curly_braces_in_flow_control_structures: ignore
+    avoid_init_to_null: ignore
+    avoid_print: ignore
 include: package:flutter_lints/flutter.yaml
 
 linter:

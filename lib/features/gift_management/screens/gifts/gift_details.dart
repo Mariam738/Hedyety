@@ -6,6 +6,7 @@ import 'package:getwidget/components/toggle/gf_toggle.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
 import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
+import 'package:hedyety/features/gift_management/screens/gifts/gift_detail_controller.dart';
 import 'package:hedyety/main.dart';
 import 'package:hedyety/my_theme.dart';
 import 'package:hedyety/common/widgets/switch/my_switch.dart';
@@ -15,7 +16,8 @@ import 'package:dropdown_textfield/dropdown_textfield.dart';
 import '../../../../Repository/local_database.dart';
 
 class GiftDetails extends StatefulWidget {
-  GiftDetails({required this.isFriend,required this.isAdd, required this.isEdit });
+  GiftDetails(
+      {required this.isFriend, required this.isAdd, required this.isEdit});
 
   final bool isFriend;
   final bool isAdd;
@@ -26,62 +28,63 @@ class GiftDetails extends StatefulWidget {
 }
 
 class _GiftDetailsState extends State<GiftDetails> {
-  File? _uploadedImage;
   bool _pledged = false;
-  int? _value = 1;
 
 
-  LocalDatabse mydb = LocalDatabse();
+   Map? args;
+  late GiftDetailsController controller;
+  
+   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = GiftDetailsController();
 
-  final GlobalKey<FormState> key = GlobalKey();
-  TextEditingController name = TextEditingController();
-  TextEditingController description = TextEditingController();
-  TextEditingController price = TextEditingController();
-  TextEditingController category = TextEditingController();
-
-  late final Map? args;
+  }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     args = ModalRoute.of(context)?.settings.arguments as Map?;
-    if(widget.isEdit) {
-      name.text = args!['name'];
-      description.text = args!['description'];
-      price.text = args!['price'];
-      _value = MyConstants.categoryList.indexOf(args!['category']);
+      print('GiftDetails initialized with args: $args');
 
+    if (widget.isEdit) {
+      controller.name.text = args!['name'];
+      controller.description.text = args!['description'];
+      controller.price.text = args!['price'];
+      controller.value =
+          MyConstants.categoryList.indexWhere((e) => e == args!['category']);
       print('gifts ${args!['id']}');
       // setState(() {});
     }
+    controller.id = args!['id'];
+    controller.eventName = args!['eventName'];
+    args=null;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     Color _clr = Colors.black;
-    bool isEditable = widget.isAdd || widget.isEdit|| _pledged == false;
+    bool isEditable = widget.isAdd || widget.isEdit || _pledged == false;
 
-
-
-      return Template(
+    return Template(
       title: "Gift Details",
       child: SingleChildScrollView(
         child: Form(
-          key: key,
+          key: controller.key,
           child: Column(
             children: [
               /// Uploaded Image
-              if (_uploadedImage != null) Image.file(_uploadedImage!),
+              if (controller.uploadedImage != null)
+                Image.file(controller.uploadedImage!),
 
               /// Gift Name Field
               InputField(
                   readOnly: !isEditable,
                   labelText: "Gift Name",
                   prefixIcon: const Icon(CupertinoIcons.gift),
-                  controller: name),
+                  controller: controller.name),
               const SizedBox(height: 16),
 
               /// Gift Description Field
@@ -89,7 +92,7 @@ class _GiftDetailsState extends State<GiftDetails> {
                   readOnly: !isEditable,
                   labelText: "Gift Description",
                   prefixIcon: const Icon(Icons.description_outlined),
-                  controller: description),
+                  controller: controller.description),
               const SizedBox(height: 16),
 
               /// Gift Price Field
@@ -97,7 +100,7 @@ class _GiftDetailsState extends State<GiftDetails> {
                 readOnly: !isEditable,
                 labelText: "Gift Price",
                 prefixIcon: const Icon(CupertinoIcons.money_dollar),
-                controller: price,
+                controller: controller.price,
               ),
               const SizedBox(height: 16),
 
@@ -109,26 +112,30 @@ class _GiftDetailsState extends State<GiftDetails> {
                   MyConstants.categoryList.length,
                   (int index) {
                     return ChoiceChip(
-
                       label: Text(
                         '${MyConstants.categoryList[index]}',
                         style: TextStyle(
-                            color:
-                                index == _value ? Colors.white : Colors.black),
+                            color: index == controller.value
+                                ? Colors.white
+                                : Colors.black),
                       ),
-                      selected: _value == index,
+                      selected: controller.value != null
+                          ? controller.value == index
+                          : false,
                       selectedColor: MyTheme.primary,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                           side: BorderSide(color: MyTheme.primary)),
                       onSelected: (bool selected) {
                         setState(() {
-                          _value = selected ? index : null;
-                          if(_value !=null) {
-                            print('value $_value ${MyConstants.categoryList[_value!]}');
-                            category.text = MyConstants.categoryList[_value!];
-                            print(category.text);
-                            key.currentState!.save();
+                          controller.value = selected ? index : null;
+                          if (controller.value != null) {
+                            print(
+                                'value $controller.value ${MyConstants.eventsList[controller.value!]}');
+                            controller.category.text =
+                                MyConstants.eventsList[controller.value!];
+                            print(controller.category.text);
+                            controller.key.currentState!.save();
                           }
                         });
                       },
@@ -137,6 +144,43 @@ class _GiftDetailsState extends State<GiftDetails> {
                 ).toList(),
               ),
               const SizedBox(height: 16),
+
+              /// Gift Category
+              // Wrap(
+              //   spacing: 4,
+              //   runSpacing: 4,
+              //   children: List<Widget>.generate(
+              //     MyConstants.categoryList.length,
+              //     (int index) {
+              //       return ChoiceChip(
+
+              //         label: Text(
+              //           '${MyConstants.categoryList[index]}',
+              //           style: TextStyle(
+              //               color:
+              //                   index == _value ? Colors.white : Colors.black),
+              //         ),
+              //         selected: _value == index,
+              //         selectedColor: MyTheme.primary,
+              //         shape: RoundedRectangleBorder(
+              //             borderRadius: BorderRadius.circular(30),
+              //             side: BorderSide(color: MyTheme.primary)),
+              //         onSelected: (bool selected) {
+              //           setState(() {
+              //             _value = selected ? index : null;
+              //             if(_value !=null) {
+              //               print('value $_value ${MyConstants.categoryList[_value!]}');
+              //               controller.category.text = MyConstants.categoryList[_value!];
+              //               print(controller.category.text);
+              //               controller.key.currentState!.save();
+              //             }
+              //           });
+              //         },
+              //       );
+              //     },
+              //   ).toList(),
+              // ),
+              // const SizedBox(height: 16),
 
               /// Status
               // Switch(
@@ -173,8 +217,11 @@ class _GiftDetailsState extends State<GiftDetails> {
                   SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (!_pledged) _uploadImage();
+                        onPressed: () async {
+                          if (!_pledged) {
+                            await controller.uploadImage();
+                            setState(() {});
+                          }
                         },
                         child: const Text("⬆️ Upload Image 📷"),
                       ),
@@ -185,33 +232,22 @@ class _GiftDetailsState extends State<GiftDetails> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (key.currentState!.validate()) {
+                    print('here');
+                    if (controller.key.currentState!.validate()) {
                       try {
                         int res;
-                        if(widget.isAdd) {
-                          res = await mydb.insertData(
+                        if (widget.isAdd) {
+                         await controller.addGift();
 
-                              '''INSERT INTO 'GIFTS' ('NAME','DESCRIPTION', 'CATEGORY', 'PRICE', 'EVENTSID')
-                             VALUES ("${name.text}","${description.text}",
-                             "${category.text}", "${price.text}", "${args!['id']}")''');
-                          print("success adding gift details ");
                         }
-                        if(widget.isEdit){
-                          res = await mydb.updateData(
-                              '''UPDATE 'GIFTS' SET 
-                              'NAME' = "${name.text}",
-                              'DESCRIPTION' = "${description.text}",
-                              'CATEGORY' = "${MyConstants.categoryList[_value!]}", 
-                              'PRICE' = "${price.text}"
-                              WHERE ID= "${args!['id']}"''');
-                          print("the event value is $res");
+                        if (widget.isEdit) {
+                          await controller.editGift();
                         }
-                        Navigator.pop(context);
-
-                      } catch(e){
-                        print("error adding gift details $e");
+                      } catch (e) {
+                        print(
+                            "error adding gift details $e \n id ${args!['id']}");
                       }
-                      }
+                    }
                   },
                   child: const Text("💾 Save Gift Data 📌"),
                 ),
@@ -222,14 +258,5 @@ class _GiftDetailsState extends State<GiftDetails> {
         ),
       ),
     );
-  }
-
-  Future _uploadImage() async {
-    final retImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (retImage == null) return;
-    setState(() {
-      _uploadedImage = File(retImage!.path);
-    });
   }
 }

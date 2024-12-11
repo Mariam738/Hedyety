@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hedyety/features/gift_management/screens/profile/profile1_controller.dart';
 import 'package:hedyety/my_theme.dart';
 
 class MySwitch extends StatefulWidget {
@@ -16,6 +17,8 @@ class MySwitch extends StatefulWidget {
 }
 
 class _MySwitchState extends State<MySwitch> {
+    Profile1Controller controller = Profile1Controller();
+
 
   final MaterialStateProperty<Icon?> thumbIcon =
       MaterialStateProperty.resolveWith<Icon>((states) =>
@@ -35,6 +38,7 @@ class _MySwitchState extends State<MySwitch> {
           onChanged: widget.onChanged ?? (bool val) {
             setState(() {
               widget.value = val;
+              controller.notification = val;
             });
           },
           activeTrackColor: MyTheme.primary,

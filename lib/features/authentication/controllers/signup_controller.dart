@@ -34,10 +34,11 @@ class SignupController{
     print('pass: ${pref.get(pref.getString('email')!)}');
 
     try {
-      bool pref = true;
-      int response = await mydb.insertData(
-          '''INSERT INTO 'USERS' ('NAME','EMAIL', 'PHONE', 'UID', 'PREFERENCE') VALUES ("${username.text.trim()}","${email.text.trim()}","${phone.text.trim()}","${uid}","$pref")''');
-      print("the value is $response");
+      int pref = 1;
+      var res = await UserModel.addUser(username.text.trim(), email.text.trim(), phone.text.trim(), uid);
+      // await mydb.insertData(
+      //     '''INSERT INTO 'USERS' ('NAME','EMAIL', 'PHONE', 'UID', 'PREFERENCE') VALUES ("${username.text.trim()}","${email.text.trim()}","${phone.text.trim()}","${uid}","$pref")''');
+      print("the value is $res");
     } catch (e) {
       print("Error adding user :(" + e.toString());
     }

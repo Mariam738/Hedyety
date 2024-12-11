@@ -54,10 +54,12 @@ class MyApp extends StatelessWidget{
               '/home': (context) => Home(),
 
               '/eventsList': (context) => EventsList(isFriend: false),
-              '/friendEventsList': (context) => EventsList(isFriend: true),
-              '/eventForm': (context) => EventForm(),
+              '/filteredEventsList': (context) => EventsList(isFriend: false, isFiltered: true,),
+              '/addEventForm': (context) => EventForm(isEdit: false),
+              '/editEventForm': (context) => EventForm(isEdit: true),
 
               '/giftsList': (context) => GiftsList(isFriend: false),
+              '/filteredGiftsList': (context) => GiftsList(isFriend: false, isFiltered: true,),
               '/friendGiftsList': (context) => GiftsList(isFriend: true),
 
               '/addGiftForm': (context) => GiftDetails(isFriend: false, isAdd: true, isEdit: false,),

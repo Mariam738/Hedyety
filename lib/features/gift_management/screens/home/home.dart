@@ -10,55 +10,17 @@ import 'package:hedyety/my_theme.dart';
 
 import '../../models/user_model.dart';
 
-
 class Home extends StatefulWidget {
+  
   @override
   State<Home> createState() => _HomeState();
-
 }
 
 class _HomeState extends State<Home> {
-
   HomeController controller = HomeController();
-
-  // bool isLandscape = true;
-  // LocalDatabse mydb = LocalDatabse();
-  // List myList = [];
-
-  // Future readFriends() async{
-  //   List<Map> res=  await mydb.readData("SELECT * FROM 'USERS'");
-  //   myList = [];
-  //   myList.addAll(res);
-  //   setState(() {
-  //     print('set state');
-  //     print(myList);
-  //   });
-  // }
-
-  // @override
-  // void initState()  {
-  //   super.initState();
-  //   try {
-  //      mydb.initialize();
-  //      print('trying to initialize');
-  //   } catch(e) {
-  //      print('Db initlizaiton error');
-  //   }
-  //   try {
-  //     // List myList = [];
-  //     // myList.addAll(res);
-  //     readFriends();
-  //     print('tyring to read ${myList}');
-
-  //   } catch (e){
-  //     print('unable to read ${e}');
-  //   }
-  // }
-
 
   @override
   Widget build(BuildContext context) {
-
     // if(isLandscape) return LandscapeHome();
 
     return Template(
@@ -79,6 +41,15 @@ class _HomeState extends State<Home> {
 
           /// Search Bar
           TextField(
+            // onChanged: (val) {
+            //   print('search $val');
+            // },
+            onSubmitted: (val) {
+              // print('submit $val');
+              // controller.search(val.toLowerCase());
+              setState(() {});
+            },
+            controller: controller.searchEditing,
             cursorColor: MyTheme.primary,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.symmetric(vertical: 15.0),
@@ -99,20 +70,35 @@ class _HomeState extends State<Home> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(Icons.clear, color: Colors.red.shade900),
-                onPressed: () {},
+                onPressed: () {
+                  controller.searchEditing.clear();
+                  setState(()  {});
+                },
               ),
             ),
           ),
 
           /// List of Friends
-          Expanded(
-
-            child:
+           Expanded(
+            child: FutureBuilder(
+                future: controller.getFriends(),
+                builder: (BuildContext, snapshot) {
+                  if(snapshot.connectionState ==ConnectionState.waiting){
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  else if(snapshot.connectionState ==ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text("Error"));
+                    }
+                    else if (snapshot.hasData && snapshot.data != null) {
+                      List friends = (snapshot.data as List).
+                        map((e) => Map.from(e)).toList();
+                        print('future s ${controller.friends}');
+                      return
                   ListView.builder(
                     padding: const EdgeInsets.all(8),
                     itemCount: controller.friends.length,
                     itemBuilder: (context, index) {
-                      if(index == 0) return SizedBox.shrink();
                       return Card(
                         child: ListTile(
                           onTap: () {
@@ -123,7 +109,8 @@ class _HomeState extends State<Home> {
                             );
                           },
                           title: Text("${controller.friends[index]['NAME']}"),
-                          subtitle: Text("Upcoming Events: 1\n${controller.friends[index]['PHONE']}"),
+                          subtitle: Text(
+                              "Upcoming Events: 1\n${controller.friends[index]['PHONE']}"),
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(
                                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
@@ -131,10 +118,18 @@ class _HomeState extends State<Home> {
                         ),
                       );
                     },
-                  ),
+                  );
+                    
+                     
+                    }
+                  }
+                  return Center(child: Text("No friends yet"));
+
+                }
             ),
+          ),
 
-
+      
           /// Add Friend Manually Button
           SizedBox(
             width: double.infinity,
@@ -152,8 +147,9 @@ class _HomeState extends State<Home> {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: () {
-                controller.addContact();
+              onPressed: () async {
+                await controller.addContact();
+                setState(() {});
               },
               child: const Text("Add Friend From My Contact List"),
             ),

@@ -44,7 +44,10 @@ class _InputFieldState extends State<InputField> {
         },
 
         child: TextFormField(
-          
+          onSaved: (val) {setState(() {
+            widget.controller!.text = val ??" ";
+            print('text editing $val');
+          });},
           cursorColor: MyTheme.primary,
           initialValue: widget.initialValue,
           readOnly: widget.readOnly,

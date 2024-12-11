@@ -10,6 +10,16 @@ class MyConstants {
     "Other"
   ];
 
+  static final List eventsList = [
+    "New Year☃️",
+    "New House🏡",
+    "Christmas🎄",
+    "Graduation🎓",
+    "Halloween👻",
+    "Birthday🎂",
+    "Other"
+  ];
+
   static final List eventStatusList = ["Upcoming", "Current", "Past"];
   
   static final List giftStatusList = ["Pledged", "Unpledged"];

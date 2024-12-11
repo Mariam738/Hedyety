@@ -20,7 +20,7 @@ class _ProfileState extends State<Profile> {
     return Column(
       children: [
         CarouselSlider(
-          items: const [Profile1(), Profile2()],
+          items: [Profile1(), Profile2()],
           options: CarouselOptions(
             height: MediaQuery.of(context).size.height * 0.95,
             onPageChanged: (value, _) {

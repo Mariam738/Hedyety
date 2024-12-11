@@ -37,94 +37,108 @@ class Template extends StatelessWidget {
                 //   child: CircleAvatar(backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
                 //   radius: 20,),
                 // ),
-                ListTile(
-                  title: Text(
-                    'Home',
-                    style: TextStyle(color: MyTheme.primary),
+                Card(
+                  child: ListTile(
+                    title: Text(
+                      'Home',
+                      style: TextStyle(color: MyTheme.primary),
+                    ),
+                    leading: Icon(
+                      Icons.home,
+                    ),
+                    onTap: () {
+                      controller.goToHome();
+                    },
                   ),
-                  leading: Icon(
-                    Icons.home,
-                  ),
-                  onTap: () {
-                    controller.goToHome();
-                  },
                 ),
-                ListTile(
-                  title: Text(
-                    'My Events',
-                    style: TextStyle(color: MyTheme.primary),
+                Card(
+                  child: ListTile(
+                    title: Text(
+                      'My Events',
+                      style: TextStyle(color: MyTheme.primary),
+                    ),
+                    leading: Icon(
+                      Icons.event,
+                    ),
+                    onTap: () {
+                      controller.goToEventsList();
+                    },
                   ),
-                  leading: Icon(
-                    Icons.event,
-                  ),
-                  onTap: () {
-                    controller.goToEventsList();
-                  },
                 ),
-                ListTile(
-                  title: Text(
-                    'My Pledged Gifts',
-                    style: TextStyle(color: MyTheme.primary),
+                Card(
+                  child: ListTile(
+                    title: Text(
+                      'My Pledged Gifts',
+                      style: TextStyle(color: MyTheme.primary),
+                    ),
+                    leading: Icon(
+                      Icons.handshake,
+                    ),
+                    onTap: () {
+                      controller.goToMyPledgedGifts();
+                    },
                   ),
-                  leading: Icon(
-                    Icons.handshake,
-                  ),
-                  onTap: () {
-                    controller.goToMyPledgedGifts();
-                  },
                 ),
-                ListTile(
-                  title: Text(
-                    'Profile',
-                    style: TextStyle(color: MyTheme.primary),
+                Card(
+                  child: ListTile(
+                    title: Text(
+                      'Profile',
+                      style: TextStyle(color: MyTheme.primary),
+                    ),
+                    leading: Icon(
+                      Icons.person,
+                    ),
+                    onTap: () {
+                      controller.goToProfile();
+                    },
                   ),
-                  leading: Icon(
-                    Icons.person,
-                  ),
-                  onTap: () {
-                    controller.goToProfile();
-                  },
                 ),
-                ListTile(
-                  title: Text(
-                    'Log Out',
-                    style: TextStyle(color: MyTheme.primary),
+                Card(
+                  child: ListTile(
+                    title: Text(
+                      'Log Out',
+                      style: TextStyle(color: MyTheme.primary),
+                    ),
+                    leading: Icon(
+                      Icons.logout,
+                    ),
+                    onTap: () {
+                      controller.signout();
+                    },
                   ),
-                  leading: Icon(
-                    Icons.logout,
-                  ),
-                  onTap: () {
-                    controller.signout();
-                  },
                 ),
               ]),
             )
           : Drawer(
               child: ListView(
                 children: [
-                  ListTile(
-                    title: Text(
-                      'Sign up',
-                      style: TextStyle(color: MyTheme.primary),
+                  Card(
+                    child: ListTile(
+                      title: Text(
+                        'Sign up',
+                        style: TextStyle(color: MyTheme.primary),
+                      ),
+                      leading: Icon(
+                        Icons.app_registration,
+                      ),
+                      onTap: () {
+                        controller.goToSignUp();
+                      },
                     ),
-                    leading: Icon(
-                      Icons.app_registration,
-                    ),
-                    onTap: () {
-                      controller.goToSignUp();
-                    },
                   ),
-                  ListTile(
-                    title: Text(
-                      'Login',
-                      style: TextStyle(color: MyTheme.primary),
+                  Card(
+                    child: ListTile(
+                      title: Text(
+                        'Login',
+                        style: TextStyle(color: MyTheme.primary),
+                      ),
+                      leading: Icon(
+                        Icons.login,
+                      ),
+                      onTap: () {
+                        controller.goToLogin();
+                      },
                     ),
-                    leading: Icon(
-                      Icons.login,
-                    ),
-                    onTap: () {
-                      controller.goToLogin();
-                    },
                   ),
                 ],
               ),

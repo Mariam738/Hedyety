@@ -1,20 +1,24 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_native_contact_picker/model/contact.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/features/gift_management/models/user_model.dart';
 import 'package:hedyety/main_controller.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
+import 'package:flutter/material.dart';
 
 class HomeController {
 
   PhoneContact? contact;
   List friends = [];
+  TextEditingController searchEditing = TextEditingController();
 
   toAddFriendFrom() {
     MainController.navigatorKey.currentState!.pushReplacementNamed('/addFriendFrom');
   }
 
   toEventForm() {
-        MainController.navigatorKey.currentState!.pushReplacementNamed('/eventForm');
+        MainController.navigatorKey.currentState!.pushReplacementNamed('/addEventForm');
   }
 
   addContact() async {
@@ -28,11 +32,23 @@ class HomeController {
         }
       }
     }
-    // Contact? contact = await _contactPicker.selectContact();
-    print(contact);
+    getFriends();
   }
 
-  getFriends() {
-    friends.addAll(UserModel.getFriends());
+  Future getFriends() async {
+    friends = [];
+    var res = await UserModel.getFriends(await SharedPref().getCurrentUid());
+    friends.addAll(res);
+    print('friends searchc ${searchEditing.text}');
+    if(searchEditing.text.isEmpty == false && searchEditing.text != null)
+      search(searchEditing.text.toLowerCase());
+    print('friends $friends');
+    return friends;
   }
+
+  search (String val) {
+    friends = friends.where((e)=> e['NAME'].toString().toLowerCase().contains(val) ).toList();
+    print('search $friends');
+  }
+  
 }

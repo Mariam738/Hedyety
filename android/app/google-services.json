@@ -8,7 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:137707352143:android:83a1efe50913f3a9bbba3a",
+        "mobilesdk_app_id": "1:137707352143:android:163bdb3748082f89bbba3a",
         "android_client_info": {
           "package_name": "com.example.hedyety"
         }
@@ -16,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA4GXYppGSXkdU2lAbSS5cuqqh21KCtWsc"
+          "current_key": "AIzaSyDLSWtajQKBK_FeRH2r8S3-SBkCL2HW-bc"
         }
       ],
       "services": {

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
+import 'package:hedyety/features/gift_management/screens/home/add_friend_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
 
@@ -12,21 +13,15 @@ import '../../../../Repository/local_database.dart';
 
 class AddFriendForm extends StatelessWidget {
 
-  LocalDatabse mydb = LocalDatabse();
-
-
-  final GlobalKey<FormState> key = GlobalKey();
-  TextEditingController name = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController phone = TextEditingController();
-
+  AddFriendController controller = AddFriendController();
+  
   @override
   Widget build(BuildContext context) {
     return Template(
       title: "Add Friend",
       child: SingleChildScrollView(
         child: Form(
-          key: key,
+          key: controller.key,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -36,7 +31,7 @@ class AddFriendForm extends StatelessWidget {
                 readOnly: false,
                 prefixIcon: const Icon(Icons.person),
                 labelText: "Friend Name",
-                controller: name,
+                controller: controller.name,
                 ),
                 const SizedBox(height: 16),
                 /// Email
@@ -44,7 +39,7 @@ class AddFriendForm extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(Icons.mail),
                   labelText: "Email",
-                  controller: email,
+                  controller: controller.email,
                   validator: (value) {
 
                     if(value == null || value.isEmpty ||
@@ -61,7 +56,7 @@ class AddFriendForm extends StatelessWidget {
                   readOnly: false,
                   prefixIcon: const Icon(Icons.phone),
                   labelText: "Phone",
-                  controller: phone,
+                  controller: controller.phone,
                 ),
                 const SizedBox(height: 16),
 
@@ -69,23 +64,8 @@ class AddFriendForm extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if (key.currentState!.validate()) {
-                        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        //     content: const Text('Friend Added.')
-                        // ));
-                        try{
-                          int response = await mydb.insertData(
-                              '''INSERT INTO 'USERS' ('NAME','EMAIL','PHONE') VALUES ("${name.text}","${email.text}","${phone.text}")''');
-                          print("the value is $response");
-                          // '''INSERT INTO 'BC' ('NAME','COMPANY-NAME','EMAIL') VALUES ("${Name.text}","${CompanyName.text}","${Email.text}")''');
-
-                      Navigator.pushReplacementNamed(context, '/home');
-                        } catch(e) {
-                          print("Error adding friend :(" + e.toString());
-                        }
-
-                      }
+                    onPressed: ()  {
+                      controller.addFriend();
                     },
                     child: const Text("➕ Add Friend 👱️ "),
                   ),

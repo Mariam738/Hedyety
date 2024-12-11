@@ -37,6 +37,7 @@ class LocalDatabse {
       'DATE' TEXT,
       'LOCATION' TEXT,
       'DESCRIPTION' TEXT,
+      'CATEGORY' TEXT,
       'USERID' INTEGER,
       FOREIGN KEY(USERID) REFERENCES USERS(ID)
        )
@@ -83,7 +84,7 @@ class LocalDatabse {
 
   deleteData(String SQL) async {
     Database? db = await localDatabase;
-    int res = await db!.rawDelete(SQL);
+    var res = await db!.rawDelete(SQL);
     return res;
   }
 
