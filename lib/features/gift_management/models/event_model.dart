@@ -2,6 +2,7 @@ import 'package:hedyety/Repository/local_database.dart';
 
 class EventModel {
   int? id;
+  String? eid;
   String? name;
   String? date; 
   String? location; 
@@ -11,7 +12,7 @@ class EventModel {
 
   static LocalDatabse mydb = LocalDatabse();
 
-  EventModel({this.name, this.date, this.location, this.description, this.category, this.userId});
+  EventModel({this.id, this.name, this.date, this.location, this.description, this.category, this.userId, this.eid});
 
   static addEvent(String name, String date, String location, String description, String category, int userId) async {
     try {
@@ -38,6 +39,17 @@ class EventModel {
     }
   }
 
+  static editEid(String eid, int id) async {
+    try {
+      int res = await mydb.updateData(
+        '''UPDATE 'EVENTS' SET 'EID' = "$eid" WHERE ID= "$id"''');
+      return res;
+    } catch(e) {
+      print('error in editEid $e');
+      return null;
+    }
+  }
+
   static getEvents(currentUid) async{
     try{
     List<Map> res=  await mydb.readData('''SELECT * FROM 'EVENTS' WHERE USERID="$currentUid"''');
@@ -58,5 +70,14 @@ class EventModel {
     }
   }
 
+  toJson() {
+    return {
+      'name': name,
+      'date': date,
+      'location': location,
+      'description': description,
+      'category': category,
+    };
+  }
 }
   

@@ -2,12 +2,24 @@ import 'package:hedyety/Repository/local_database.dart';
 
 class GiftModel {
   int? id;
+  String? gid;
   String? name;
   String? description;
   String? category;
   String? price;
   String? status;
   int? eventId;
+
+  GiftModel(
+      {this.id,
+      this.gid,
+      this.name,
+      this.description,
+      this.category,
+      this.price,
+      this.status,
+      this.eventId});
+
   static LocalDatabse mydb = LocalDatabse();
 
   static addGift(String name, String description, String category, String price,
@@ -41,16 +53,28 @@ class GiftModel {
     }
   }
 
+  static editGid(String gid, int id) async {
+    try {
+      int res = await mydb
+          .updateData('''UPDATE 'GIFTS' SET 'GID' = "$gid" WHERE ID= "$id"''');
+      return res;
+    } catch (e) {
+      print('error in editGid $e');
+      return null;
+    }
+  }
+
   static getGifts(eventId) async {
     try {
-      List<Map> res = await mydb.readData("SELECT * FROM 'GIFTS' WHERE EVENTSID = $eventId");
+      List<Map> res = await mydb
+          .readData("SELECT * FROM 'GIFTS' WHERE EVENTSID = $eventId");
       return res;
     } catch (e) {
       print('error in getGifts $e');
     }
   }
 
-   static deleteGift(int id) async {
+  static deleteGift(int id) async {
     try {
       int res = await mydb.deleteData("DELETE FROM GIFTS WHERE ID=$id");
       return res;
@@ -60,4 +84,13 @@ class GiftModel {
     }
   }
 
+  toJson() {
+    return {
+      'name': name,
+      'description': description,
+      'category': category,
+      'price': price,
+      'status': status,
+    };
+  }
 }

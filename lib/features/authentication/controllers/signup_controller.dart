@@ -4,7 +4,7 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/auth_service.dart';
-import 'package:hedyety/Repository/firestore.dart';
+import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/features/authentication/screens/sign_up.dart';
 import 'package:hedyety/features/gift_management/models/user_model.dart';
@@ -23,7 +23,7 @@ class SignupController{
 
   LocalDatabse mydb = LocalDatabse();
 
-  Firebase fb = Firebase();
+  RealtimeDB fb = RealtimeDB();
 
   saveDataLocal(Digest digest, String uid) async {
     SharedPreferences pref = await SharedPreferences.getInstance();

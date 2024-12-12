@@ -33,6 +33,7 @@ class LocalDatabse {
 
       db.execute('''CREATE TABLE IF NOT EXISTS 'EVENTS' (
       'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      'EID' TEXT,
       'NAME' TEXT,
       'DATE' TEXT,
       'LOCATION' TEXT,
@@ -45,6 +46,7 @@ class LocalDatabse {
 
       db.execute('''CREATE TABLE IF NOT EXISTS 'GIFTS' (
       'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      'GID' TEXT,
       'NAME' TEXT,
       'DESCRIPTION' TEXT,
       'CATEGORY' TEXT,

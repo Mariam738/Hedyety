@@ -62,7 +62,10 @@ class Profile2 extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async{
+                  await controller.publishEvents();
+                  // await controller.publishGifts();
+                },
                 child: const Text("⬆️ Publish 📢"),
               ),
             ),
