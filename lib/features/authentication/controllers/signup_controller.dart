@@ -46,7 +46,7 @@ class SignupController{
 
   saveDataCloud(Map<String, dynamic> usr, String uid) async {
     fb.addUser(usr, uid);
-    fb.addPhoneUser({'phone' : phone.text.trim()}, uid);
+    fb.addPhoneUser(phone.text.trim(), uid);
   }
 
   signup() async {

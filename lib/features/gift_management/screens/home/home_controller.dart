@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_contact_picker/model/contact.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
+import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/features/gift_management/models/user_model.dart';
 import 'package:hedyety/main_controller.dart';
@@ -12,6 +13,8 @@ class HomeController {
   PhoneContact? contact;
   List friends = [];
   TextEditingController searchEditing = TextEditingController();
+  RealtimeDB fb = RealtimeDB();
+
 
   toAddFriendFrom() {
     MainController.navigatorKey.currentState!.pushReplacementNamed('/addFriendFrom');
@@ -51,4 +54,11 @@ class HomeController {
     print('search $friends');
   }
   
+  toFriendEvents(String phone) async {
+    var res = await fb.getFriendEventsByPhone(phone);
+    if(res != null)
+    MainController.navigatorKey.currentState!.pushReplacementNamed('/friendEventsList', arguments: res);
+    else 
+    MainController.msngrKey.currentState!.showSnackBar(SnackBar(content: Text('Sorry but your friend do not have Hedyety account.🙁')));
+  }
 }

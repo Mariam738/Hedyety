@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dropdown_textfield/dropdown_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/local_database.dart';
+import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/features/gift_management/models/event_model.dart';
@@ -15,6 +16,11 @@ class EventsListController {
   LocalDatabse mydb = LocalDatabse();
   List myList = [];
   List filtered = [];
+
+  var args;
+  RealtimeDB fb = RealtimeDB();
+  bool? isFriend;
+
 
   EventsListController._internal();
 
@@ -48,9 +54,17 @@ class EventsListController {
   }
 
   toGiftsList(int index) {
+    if(isFriend!) {
+       MainController.navigatorKey.currentState!.pushReplacementNamed('/friendGiftsList',
+        arguments:{'UID': args,'GIFTS':myList[index]['GIFTS']});
+      print('args > gifts $args ${myList[index]['GIFTS']}');
+    }
+    else 
     MainController.navigatorKey.currentState!.pushReplacementNamed('/giftsList',
         arguments: {"id": myList[index]['ID'], "name": myList[index]['NAME']});
   }
+
+  
 
   toEditEventForm(int index) {
     MainController.navigatorKey.currentState!
@@ -86,7 +100,48 @@ class EventsListController {
 
       filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
       MainController.navigatorKey.currentState!.pop();
-      MainController.navigatorKey.currentState!.pushReplacementNamed('/filteredEventsList');
+      MainController.navigatorKey.currentState!.pushReplacementNamed('/filteredEventsList', arguments: args);
+      return filtered;
+  }
+
+  Future readFriendEvents() async {
+    Map res = await fb.getEventsByUid(args);
+    Map<String, dynamic> casted = Map<String, dynamic>.from(res);
+     List<Map> list = casted.entries.map((entry) {
+    String id = entry.key as String ;
+    Map<String, dynamic> data =Map<String, dynamic>.from(entry.value);
+    return {
+      "ID": id,
+      "DATE": data["date"],
+      "NAME": data["name"],
+      "LOCATION": data["location"],
+      "CATEGORY": data["category"],
+      "GIFTS": data["gifts"] != null ? data["gifts"].keys.toList() : [],
+    };
+  }).toList();
+  myList = [];
+  myList.addAll(list);
+    return myList;
+  }
+
+  filterForFriend(bool isAscending, List category, List status) async {
+    print('hennnnnnaa');
+    if(category. isEmpty) category = MyConstants.eventsList;
+    if(status. isEmpty) status = MyConstants.eventStatusList;
+    myList = await readFriendEvents();
+    print('myList filterfriend $myList');
+    
+      isAscending
+          ? myList.sort((a, b) {
+              return a['NAME'].compareTo(b['NAME']);
+            })
+          : myList.sort((a, b) {
+              return b['NAME'].compareTo(a['NAME']);
+            });
+
+      filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
+      MainController.navigatorKey.currentState!.pop();
+      MainController.navigatorKey.currentState!.pushReplacementNamed('/friendFilteredEventsList', arguments: args);
       return filtered;
   }
 }

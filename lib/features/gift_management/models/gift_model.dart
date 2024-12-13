@@ -53,6 +53,19 @@ class GiftModel {
     }
   }
 
+  static editGiftStatus(String status, int eventId) async {
+     try {
+      int res = await mydb.updateData('''UPDATE 'GIFTS' SET 
+                              'STATUS' = "${status}"
+                              WHERE ID= "${eventId}"''');
+      return res;
+    } catch (e) {
+      print('error in add Event $e');
+      return null;
+    }
+  }
+
+
   static editGid(String gid, int id) async {
     try {
       int res = await mydb
@@ -74,6 +87,16 @@ class GiftModel {
     }
   }
 
+  static getAllGifts() async {
+     try {
+      List<Map> res = await mydb
+          .readData("SELECT * FROM 'GIFTS'");
+      return res;
+    } catch (e) {
+      print('error in getAllGifts $e');
+    }
+  }
+
   static deleteGift(int id) async {
     try {
       int res = await mydb.deleteData("DELETE FROM GIFTS WHERE ID=$id");
@@ -86,11 +109,11 @@ class GiftModel {
 
   toJson() {
     return {
-      'name': name,
-      'description': description,
-      'category': category,
-      'price': price,
-      'status': status,
+      'NAME': name,
+      'DESCRIPTION': description,
+      'CATEGORY': category,
+      'PRICE': price,
+      'STATUS': status,
     };
   }
 }

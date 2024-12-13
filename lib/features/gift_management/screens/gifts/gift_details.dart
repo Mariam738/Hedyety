@@ -45,11 +45,15 @@ class _GiftDetailsState extends State<GiftDetails> {
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
+    controller.onValueChanged = updateValue;
     super.didChangeDependencies();
     args = ModalRoute.of(context)?.settings.arguments as Map?;
       print('GiftDetails initialized with args: $args');
-
-    if (widget.isEdit) {
+    if(widget.isFriend) {
+      _pledged = true;
+       controller.getFriendGift(args!['uid'], args!['gid']);
+    }
+    else{ if (widget.isEdit) {
       controller.name.text = args!['name'];
       controller.description.text = args!['description'];
       controller.price.text = args!['price'];
@@ -61,13 +65,20 @@ class _GiftDetailsState extends State<GiftDetails> {
     controller.id = args!['id'];
     controller.eventName = args!['eventName'];
     args=null;
+    }
   }
+  void updateValue(){
+    if(mounted)
+      setState(() {
+      });
+    }
 
   @override
   Widget build(BuildContext context) {
     Color _clr = Colors.black;
-    bool isEditable = widget.isAdd || widget.isEdit || _pledged == false;
-
+    bool isEditable = widget.isAdd || widget.isEdit || _pledged == false || widget.isFriend ==false;
+              // print('controller value ${controller.value}');
+    
     return Template(
       title: "Gift Details",
       child: SingleChildScrollView(
@@ -127,6 +138,7 @@ class _GiftDetailsState extends State<GiftDetails> {
                           borderRadius: BorderRadius.circular(30),
                           side: BorderSide(color: MyTheme.primary)),
                       onSelected: (bool selected) {
+                        if(widget.isFriend == false)
                         setState(() {
                           controller.value = selected ? index : null;
                           if (controller.value != null) {
@@ -188,7 +200,7 @@ class _GiftDetailsState extends State<GiftDetails> {
               //   activeColor: MyTheme.primary,
               //   onChanged: (_) {},
               // ),
-              widget.isAdd
+              widget.isAdd || widget.isFriend
                   ? SizedBox.shrink()
                   : MySwitch(
                       value: !_pledged,
@@ -202,11 +214,13 @@ class _GiftDetailsState extends State<GiftDetails> {
               /// Button
               /// Pledge Button
               widget.isFriend
-                  ? (!_pledged
+                  ? (args!['status']==null
                       ? SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              controller.pledgeGift(args!['uid'], args!['gid']);
+                            },
                             child: const Text("🤝 Pledge Gift 🎁 "),
                           ),
                         )
@@ -228,6 +242,7 @@ class _GiftDetailsState extends State<GiftDetails> {
                     ),
               const SizedBox(height: 16),
 
+              widget.isFriend ? SizedBox.shrink() :
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

@@ -24,20 +24,20 @@ class EventsList extends StatefulWidget {
 }
 
 class _EventsListState extends State<EventsList> {
-EventsListController controller = EventsListController();
-
-   @override
-  void initState() {
-    super.initState();
-    // controller.readEvents();
-  }
+  EventsListController controller = EventsListController();
 
   @override
-  void dispose(){
-    // controller.stream.close();
-    super.dispose();
-  
-}
+  void didChangeDependencies() {
+    controller.isFriend = widget.isFriend;
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (widget.isFriend) {
+       controller.args = ModalRoute.of(context)?.settings.arguments ;
+      if (controller.args != null ) {
+        print("args ${controller.args}");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +53,11 @@ EventsListController controller = EventsListController();
                   context: context,
                   builder: (BuildContext context) {
                     return FilteContainer(
+                      isFriend: widget.isFriend,
                       categoryList: MyConstants.eventsList,
                       isEvent: true,
                     );
                   });
-                  
             },
             icon: Icon(Icons.filter_alt_outlined),
           ),
@@ -68,7 +68,9 @@ EventsListController controller = EventsListController();
           /// List of Events
           Expanded(
             child: FutureBuilder(
-                future:  controller.readEvents(widget.isFiltered),
+                future: widget.isFriend == false
+                    ? controller.readEvents(widget.isFiltered)
+                    : controller.readFriendEvents(),
                 builder: (BuildContext, snapshot) {
                   print(snapshot.connectionState);
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -76,15 +78,19 @@ EventsListController controller = EventsListController();
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasError) {
                       return Center(child: Text("Error"));
-                    } 
-                    else if (snapshot.hasData && snapshot.data != null) {
+                    } else if (snapshot.hasData && snapshot.data != null) {
                       // List events = (snapshot.data as List)
                       //     .map((e) => Map.from(e))
                       //     .toList();
                       // print('from future $events');
                       // print('from snap ${snapshot.data}');
                       print('events in before lsit ${controller.myList}');
-                      List events = widget.isFiltered == false? controller.myList : controller.filtered;
+                      List events =  widget.isFiltered == false
+                          ? controller.myList
+                          : controller.filtered;
+                      // List events = widget.isFiltered == false
+                      //     ? controller.myList
+                      //     : controller.filtered;
                       print('events $events  ${widget.isFiltered}');
                       return ListView.builder(
                         padding: const EdgeInsets.all(8),
@@ -95,8 +101,7 @@ EventsListController controller = EventsListController();
                               onTap: () {
                                 controller.toGiftsList(index);
                               },
-                              title:
-                                  Text("${events[index]['NAME']}"),
+                              title: Text("${events[index]['NAME']}"),
                               subtitle: Text(
                                   "Category: ${events[index]['CATEGORY']}\n Status: Upcoming"),
                               trailing: widget.isFriend
@@ -104,12 +109,11 @@ EventsListController controller = EventsListController();
                                   : Wrap(
                                       children: [
                                         IconButton(
-                                          icon: Icon(Icons.edit),
-                                          color: MyTheme.editButtonColor,
-                                          onPressed: ()  {
-                                            controller.toEditEventForm(index);
-                                          }
-                                        ),
+                                            icon: Icon(Icons.edit),
+                                            color: MyTheme.editButtonColor,
+                                            onPressed: () {
+                                              controller.toEditEventForm(index);
+                                            }),
                                         SizedBox(
                                           width: 10,
                                         ),
@@ -129,7 +133,7 @@ EventsListController controller = EventsListController();
                         },
                       );
                     }
-                   }
+                  }
                   return Center(child: Text("No Events yet"));
                 }),
           ),

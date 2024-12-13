@@ -102,11 +102,12 @@ class _HomeState extends State<Home> {
                       return Card(
                         child: ListTile(
                           onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/giftsList',
-                              arguments: 'args',
-                            );
+                            controller.toFriendEvents(controller.friends[index]['PHONE']);
+                            // Navigator.pushNamed(
+                            //   context,
+                            //   '/giftsList',
+                            //   arguments: 'args',
+                            // );
                           },
                           title: Text("${controller.friends[index]['NAME']}"),
                           subtitle: Text(

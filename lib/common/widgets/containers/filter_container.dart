@@ -13,9 +13,11 @@ class FilteContainer extends StatefulWidget {
     super.key,
     required this.categoryList,
     required this.isEvent,
+    this.isFriend = false
   });
   final List categoryList;
   final bool isEvent;
+  final bool isFriend;
 
   @override
   State<FilteContainer> createState() => _FilteContainerState();
@@ -147,6 +149,8 @@ class _FilteContainerState extends State<FilteContainer> {
               child: ElevatedButton(
                 // onPressed: () {print('filter pressed');},
                   onPressed: () async{
+                    print('filter containter ${widget.isFriend}');
+                    widget.isFriend ? controller.filterForFriend(isAscending, _selectedCategories, _selectedStatus) :
                      controller.filter(isAscending, _selectedCategories, _selectedStatus) ;
                   }, //() {=> Navigator.pop(context)},
                   child: const Text('Sort')),

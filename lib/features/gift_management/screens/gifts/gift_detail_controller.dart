@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hedyety/Repository/auth_service.dart';
 import 'package:hedyety/Repository/local_database.dart';
+import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/features/gift_management/models/gift_model.dart';
 import 'package:hedyety/main_controller.dart';
@@ -15,11 +17,21 @@ class GiftDetailsController {
   TextEditingController category = TextEditingController();
 
   LocalDatabse mydb = LocalDatabse();
+    RealtimeDB fb = RealtimeDB();
+      final _auth = AuthService();
+
 
   int? id;
   String? eventName;
   int? value = null;
   File? uploadedImage;
+  var friendGift;
+  void Function()? onValueChanged;
+
+  void updateValue(){
+    if(onValueChanged != null)
+      onValueChanged!();
+  }
 
   addGift() async {
      if(value== null) MainController.msngrKey.currentState!.showSnackBar(
@@ -61,5 +73,29 @@ class GiftDetailsController {
 
     if (retImage == null) return;
     uploadedImage = File(retImage!.path);
+  }
+
+  Future getFriendGift(String uid, String gid) async {
+    var res = await fb.getGiftByUidAndGid(uid, gid);
+    name.text = res['NAME'];
+    description.text = res['DESCRIPTION'];
+    price.text = res['PRICE'];
+    value =
+          MyConstants.categoryList.indexWhere((e) => e == res['CATEGORY']);
+    updateValue();
+    friendGift = res;
+    print('getFriendGift $res');
+    return ;
+  }
+
+  Future pledgeGift(String friendid, String gid) async{
+    try{
+    await fb.pledgeGift(await _auth.getUserId()!,friendid, gid);
+    MainController.msngrKey.currentState!.showSnackBar(SnackBar(content: Text('Gift pledged sucessfully')));
+    
+    } catch (e){
+      print(e);
+    }
+    return;
   }
 }

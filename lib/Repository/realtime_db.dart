@@ -10,11 +10,12 @@ class RealtimeDB {
     await _fb.ref('/users/$uid').set(usr);
   }
 
-  Future<void> addPhoneUser(Map<String, String> phone, String uid) async {
-    await _fb.ref('/phones/$uid').set(phone);
+  Future<void> addPhoneUser(String phone, String uid) async {
+    await _fb.ref('/phones/$phone').set(uid);
   }
 
-  Future<bool> publishUserEvents(List<EventModel> events, List gifts, String uid) async {
+  Future<bool> publishUserEvents(
+      List<EventModel> events, List gifts, String uid) async {
     try {
       await _fb.ref('/events/$uid').remove();
       await _fb.ref('/gifts/$uid').remove();
@@ -38,21 +39,68 @@ class RealtimeDB {
     }
   }
 
-  Future<Map> publishUserGift(List gifts, String uid) async{
+  Future<Map> publishUserGift(List gifts, String uid) async {
     Map<String, bool> map = {};
-     for (int i = 0; i < gifts.length; i++) {
+    for (int i = 0; i < gifts.length; i++) {
       String key;
       print('publishUserGift ${gifts[i].toJson()}');
-        if (gifts[i].gid == null) {
-          key = _fb.ref('/gifts/$uid').push().key!;
-          GiftModel.editGid(key!, gifts[i].id!);
-        } else
-          key = gifts[i].gid;
-        print('publishUserGift key $key');
-        await _fb.ref('/gifts/$uid/$key').set(gifts[i].toJson());
-        map[key] = true;
-     }
+      if (gifts[i].gid == null) {
+        key = _fb.ref('/gifts/$uid').push().key!;
+        GiftModel.editGid(key!, gifts[i].id!);
+      } else
+        key = gifts[i].gid;
+      print('publishUserGift key $key');
+      await _fb.ref('/gifts/$uid/$key').set(gifts[i].toJson());
+      map[key] = true;
+    }
     return map;
+  }
+
+  Future getFriendEventsByPhone(String phone) async {
+    final snap = await _fb.ref('/phones/$phone').get();
+    if (snap.exists) return snap.value;
+    return null;
+  }
+
+  Future getEventsByUid(String uid) async {
+    final snap = await _fb.ref('/events/$uid').get();
+    if (snap.exists) return snap.value;
+    return null;
+  }
+
+  Future getGiftsById(String uid, List id) async {
+    List gifts = [];
+    for (int i = 0; i < id.length; i++) {
+      final snap = await _fb.ref('/gifts/$uid/${id[i]}').get();
+      if (snap.exists) gifts.add(snap.value);
+    }
+    print('getGiftsById $gifts');
+    return gifts;
+  }
+
+  Future getGiftByUidAndGid(String uid, String gid) async {
+    final snap = await _fb.ref('/gifts/$uid/$gid').get();
+    if (snap.exists) return snap.value;
+    return null;
+  }
+
+  Future pledgeGift(String uid, String friendid, String gid) async {
+    await _fb.ref('/pledgedGifts/$uid').set({'friendId': friendid, 'gid': gid});
+    await _fb.ref('/gifts/$friendid/$gid').update({'STATUS': 'pledged'});
+    // TO DO sync user gift status with firebase maybe on login
+  }
+
+  Future getMyPledgedGifts(String uid) async {
+    final snap = await _fb.ref('/gifpledgedGiftsts/$uid').get();
+    if (snap.exists) return snap.value;
+    return null;
+  }
+
+  Future getGiftStatus(String uid, String gid) async {
+    final snap = await _fb.ref('/gifts/$uid/$gid/STATUS').get();
+    print('getGiftStatus ${snap.value}');
+    if (snap.exists) return snap.value;
+    return null;
   }
 
   // FirebaseFirestore firestore = FirebaseFirestore.instance;

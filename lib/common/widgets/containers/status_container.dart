@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hedyety/my_theme.dart';
 
 class StatusContainer extends StatelessWidget {
   const StatusContainer({
@@ -16,7 +17,7 @@ class StatusContainer extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.amber,
+        color: staus == "Pledged" ? Colors.amber : Colors.green,
       ),
     );
   }

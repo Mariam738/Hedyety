@@ -4,6 +4,8 @@ import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/auth_service.dart';
 import 'package:hedyety/Repository/local_database.dart';
+import 'package:hedyety/Repository/realtime_db.dart';
+import 'package:hedyety/features/gift_management/models/gift_model.dart';
 import 'package:hedyety/features/gift_management/models/user_model.dart';
 import 'package:hedyety/main.dart';
 import 'package:hedyety/main_controller.dart';
@@ -20,7 +22,7 @@ class LoginController {
   String? passwordHashPref;
 
   LocalDatabse mydb = LocalDatabse();
-
+  RealtimeDB fb = RealtimeDB();
 
   Future loginOffline() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -29,21 +31,24 @@ class LoginController {
     // email2.text == emailPref
     //         &&
     sha512.convert(utf8.encode(password2.text)).toString() == passwordHashPref
-        ? MainController.navigatorKey.currentState!.pushReplacementNamed('/home')
+        ? MainController.navigatorKey.currentState!
+            .pushReplacementNamed('/home')
         : MainController.msngrKey.currentState!.showSnackBar(
             SnackBar(content: const Text('Wrong Email or Password')));
   }
+
   Future setCurrentUserLocalId() async {
     try {
       var res = await UserModel.getUserByEmail(email2.text.trim());
       SharedPreferences pref = await SharedPreferences.getInstance();
-      pref.setInt('currentUser',  res[0]['ID']);
+      pref.setInt('currentUser', res[0]['ID']);
       return res;
-      } catch (e) {
-        print('error setCurrentUserLocalId $e');
-        return null;
-      }
+    } catch (e) {
+      print('error setCurrentUserLocalId $e');
+      return null;
+    }
   }
+
   login() async {
     try {
       final user = await _auth.loginIn(email2.text, password2.text);
@@ -52,16 +57,30 @@ class LoginController {
         print("loged in");
         print('user id: ${_auth.getUserId()}');
         print('user local id ${await setCurrentUserLocalId()}');
+        await syncGiftsStatus();
         MainController.navigatorKey.currentState!.pushReplacementNamed('/home');
-      } 
-      else {
-        MainController.msngrKey.currentState!.showSnackBar(SnackBar(content: Text('Wrong Email or Password')));
+      } else {
+        MainController.msngrKey.currentState!
+            .showSnackBar(SnackBar(content: Text('Wrong Email or Password')));
       }
     } catch (e) {
-      // NO internet used shared 
+      // NO internet used shared
       //prefrence instead
       // TODO
       //loginOffline();
     }
+  }
+
+  syncGiftsStatus() async {
+    var res = await GiftModel.getAllGifts();
+    for (int i = 0; i < res.length; i++) {
+      if (res[i]['GID'] != null) {
+        print(res[i]['GID']);
+        var status = await fb.getGiftStatus(await _auth.getUserId()!, (res[i]['GID']));
+        if(status!=null && status!=res[i]['STATUS'])
+          await GiftModel.editGiftStatus(status, res[i]['ID']);
+      }
+    }
+    print('syncGiftsStatus $res');
   }
 }
