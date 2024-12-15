@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/auth_service.dart';
+import 'package:hedyety/Repository/firebase_api.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/constants/constants.dart';
@@ -19,6 +20,8 @@ class GiftDetailsController {
   LocalDatabse mydb = LocalDatabse();
     RealtimeDB fb = RealtimeDB();
       final _auth = AuthService();
+
+  String? firendGiftName;
 
 
   int? id;
@@ -78,6 +81,7 @@ class GiftDetailsController {
   Future getFriendGift(String uid, String gid) async {
     var res = await fb.getGiftByUidAndGid(uid, gid);
     name.text = res['NAME'];
+    firendGiftName = res['NAME'];
     description.text = res['DESCRIPTION'];
     price.text = res['PRICE'];
     value =
@@ -88,10 +92,13 @@ class GiftDetailsController {
     return ;
   }
 
-  Future pledgeGift(String friendid, String gid) async{
+  Future pledgeGift(String friendid, String gid, String eid) async{
     try{
-    await fb.pledgeGift(await _auth.getUserId()!,friendid, gid);
+    await fb.pledgeGift(await _auth.getUserId()!,friendid, gid, eid);
+      FirebaseApi().sendNotification(topic: friendid, title: "A gift is pledged:", body: "$firendGiftName", userId: "userId");
+
     MainController.msngrKey.currentState!.showSnackBar(SnackBar(content: Text('Gift pledged sucessfully')));
+
     
     } catch (e){
       print(e);

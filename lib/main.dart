@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:hedyety/Repository/firebase_api.dart';
 import 'package:hedyety/common/widgets/template/landscape_template.dart';
 import 'package:hedyety/features/authentication/screens/login.dart';
 import 'package:hedyety/features/authentication/screens/sign_up.dart';
@@ -18,12 +20,19 @@ import 'package:hedyety/main_controller.dart';
 import 'package:hedyety/my_theme.dart';
 import 'package:hedyety/features/gift_management/screens/profile/profile1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+
+
 
 import 'Repository/local_database.dart';
 
 void init() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseApi().initNotification();
+  await FirebaseApi().getAccessToken();
+  // await FirebaseApi().handleBackgroundMessage;
+  // FirebaseApi().sendNotification(fCMToken: "dIIUaNvnSnOFRkBt1nMbg8:APA91bHtRRUUpuQZ0Fzzl0alrYzfPtuoqxvqWXYDFH_CsowDQSM0PxgQ9rqsawS0L3WIK9exD10GJoIXTzvE4d5t0YAUbWkHAjyQo237CyvlPfjUFhijSCU", title: "title", body: "body", userId: "userId");
 }
 
 void main() {

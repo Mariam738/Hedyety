@@ -100,6 +100,7 @@ class _GiftsListState extends State<GiftsList> {
                                     ? controller.toFriendGift(
                                         controller.args['UID'],
                                         controller.args['GIFTS'][index],
+                                        controller.args['EID'],
                                         gifts[index]['STATUS']
                                         )
                                     : controller.toEdit(gifts[index]);

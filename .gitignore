@@ -19,6 +19,7 @@ migrate_working_dir/
 lib/firebase_options.dart
 android/app/google-services.json
 firebase.json
+lib/Repository/firebase_api.dart
 
 
 # The .vscode folder contains launch configuration and tasks you configure in

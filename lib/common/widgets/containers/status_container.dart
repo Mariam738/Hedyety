@@ -17,7 +17,7 @@ class StatusContainer extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: staus == "Pledged" ? Colors.amber : Colors.green,
+        color: staus == "Pledged" || staus == "pledged"? Colors.amber : Colors.green,
       ),
     );
   }

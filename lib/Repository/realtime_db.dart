@@ -63,6 +63,7 @@ class RealtimeDB {
   }
 
   Future getEventsByUid(String uid) async {
+
     final snap = await _fb.ref('/events/$uid').get();
     if (snap.exists) return snap.value;
     return null;
@@ -73,6 +74,8 @@ class RealtimeDB {
     for (int i = 0; i < id.length; i++) {
       final snap = await _fb.ref('/gifts/$uid/${id[i]}').get();
       if (snap.exists) gifts.add(snap.value);
+            final ref =  _fb.ref("/gifts/$uid/${id[i]}");
+      ref.onChildChanged.listen((e){print('notification $e');});
     }
     print('getGiftsById $gifts');
     return gifts;
@@ -84,24 +87,74 @@ class RealtimeDB {
     return null;
   }
 
-  Future pledgeGift(String uid, String friendid, String gid) async {
-    await _fb.ref('/pledgedGifts/$uid').set({'friendId': friendid, 'gid': gid});
+  Future pledgeGift(String uid, String friendid, String gid, String eid) async {
+    await _fb.ref('/pledgedGifts/$uid/$gid').update({'friendId': friendid, 'eid': eid});
     await _fb.ref('/gifts/$friendid/$gid').update({'STATUS': 'pledged'});
     // TO DO sync user gift status with firebase maybe on login
   }
 
   Future getMyPledgedGifts(String uid) async {
-    final snap = await _fb.ref('/gifpledgedGiftsts/$uid').get();
+    final snap = await _fb.ref('/pledgedGifts/$uid').get();
+    if (!snap.exists) return [];
+
+    Map mymap = snap.value as Map;
+    List<Map> list = mymap.entries.map((entry) {
+    String id = entry.key as String ;
+    Map<String, dynamic> data =Map<String, dynamic>.from(entry.value);
+    return {
+      "GID": id,
+      "EID": data["eid"],
+      "FID": data["friendId"],
+    };
+  }).toList();
+    print('getMyPledgedGifts ${list}');
+    List<Map<String, dynamic>> l = [];
+    // get gift name and status
+    for(int i = 0; i < list.length; i++) {
+      var giftName = await getGiftNameById(list[i]['FID'], list[i]['GID']);
+      var giftStatus = await getGiftStatus(list[i]['FID'], list[i]['GID']);
+      var eventDate = await getEventDateById(list[i]['FID'], list[i]['EID']);
+      var firendName = await getUserNameById(list[i]['FID']);
+      Map<String, dynamic> m = {'giftName' : giftName, 'giftStatus' : giftStatus, 'eventDate' : eventDate, 'firendName' : firendName, 
+      'gid': list[i]['GID'], 'fid': list[i]['FID']};
+      l.add(m);
+    }
+    return l;
+  }
+
+  Future getGiftNameById(String fid, String gid) async {
+      final snap = await _fb.ref('/gifts/$fid/$gid/NAME').get();
+      if (snap.exists) return snap.value;
+         return null;
+  }
+
+  Future getEventDateById(String fid, String eid) async {
+      final snap = await _fb.ref('/events/$fid/$eid/date').get();
+      if (snap.exists) return snap.value;
+         return null;
+  }
+  
+  Future getGiftStatus(String uid, String gid) async {
+    final snap = await _fb.ref('/gifts/$uid/$gid/STATUS').get();
     if (snap.exists) return snap.value;
     return null;
   }
 
-  Future getGiftStatus(String uid, String gid) async {
-    final snap = await _fb.ref('/gifts/$uid/$gid/STATUS').get();
-    print('getGiftStatus ${snap.value}');
+  Future getUserNameById(String uid) async{
+    final snap = await _fb.ref('/users/$uid/name').get();
     if (snap.exists) return snap.value;
     return null;
   }
+
+  Future setGiftStatus(String friendid, String gid, String status) async {
+    await _fb.ref('/gifts/$friendid/$gid').update({'STATUS': status});
+  }
+
+  // Future setFCMToken(String uid, String token) async {
+  //   if((await _fb.ref('/users/$uid/token').get()).value !=null)
+  //     await _fb.ref('/users/$uid').update({'token': token});
+
+  // }
 
   // FirebaseFirestore firestore = FirebaseFirestore.instance;
   // FirebaseFirestore.instance.Settings = Settings(persistanceEnabled: tur)

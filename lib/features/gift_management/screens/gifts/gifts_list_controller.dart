@@ -46,10 +46,10 @@ class GiftsListController {
     }
   }
 
-  void toFriendGift(String uid, String gid, String? status){
+  void toFriendGift(String uid, String gid, String eid, String? status){
     print('toFriend $uid, $gid'); 
     MainController.navigatorKey.currentState!
-        .pushNamed('/giftDetails', arguments: {'uid': uid,'gid':gid, 'status':status});
+        .pushNamed('/giftDetails', arguments: {'uid': uid,'gid':gid, 'eid': eid, 'status':status});
   }
   void toEdit(gift) {
       MainController.navigatorKey.currentState!

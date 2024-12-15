@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/auth_service.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
@@ -59,6 +60,7 @@ class SignupController{
         saveDataLocal(digest, _auth.getUserId()!);
         UserModel usr = UserModel(name: username.text.trim(), email: email.text.trim(), phone: phone.text, password: password.text.trim(), prefrence: true);
         saveDataCloud(usr.toJson(), _auth.getUserId()!);
+        await FirebaseMessaging.instance.subscribeToTopic(await _auth.getUserId()!);
         MainController.navigatorKey.currentState!.pushReplacementNamed('/login');
         // navigatorKey.of(context).pushReplacementNamed(context, '/login');
       }

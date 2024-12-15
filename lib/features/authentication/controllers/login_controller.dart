@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/auth_service.dart';
 import 'package:hedyety/Repository/local_database.dart';
@@ -57,6 +58,7 @@ class LoginController {
         print("loged in");
         print('user id: ${_auth.getUserId()}');
         print('user local id ${await setCurrentUserLocalId()}');
+
         await syncGiftsStatus();
         MainController.navigatorKey.currentState!.pushReplacementNamed('/home');
       } else {

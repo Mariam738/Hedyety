@@ -56,8 +56,8 @@ class EventsListController {
   toGiftsList(int index) {
     if(isFriend!) {
        MainController.navigatorKey.currentState!.pushReplacementNamed('/friendGiftsList',
-        arguments:{'UID': args,'GIFTS':myList[index]['GIFTS']});
-      print('args > gifts $args ${myList[index]['GIFTS']}');
+        arguments:{'UID': args,'GIFTS':myList[index]['GIFTS'], 'EID':myList[index]['ID']});
+      print('args > gifts $args ${myList[index]['GIFTS']} ${myList[index]['ID']}');
     }
     else 
     MainController.navigatorKey.currentState!.pushReplacementNamed('/giftsList',

@@ -44,7 +44,7 @@ class Profile2Controller {
     
   }
   List mapGifts() {
-    return gifts.map((subList)=> subList.map((e)=> GiftModel(id: e['ID'], name: e['NAME'], description: e['DESCRIPTION'], category: e['CATEGORY'], price: e['PRICE'],  gid: e['GID'])).toList()).toList();
+    return gifts.map((subList)=> subList.map((e)=> GiftModel(id: e['ID'], name: e['NAME'], description: e['DESCRIPTION'], category: e['CATEGORY'], status: e['STATUS'], price: e['PRICE'],  gid: e['GID'])).toList()).toList();
   }
 
 

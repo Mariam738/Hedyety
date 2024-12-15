@@ -30,38 +30,46 @@ class MyPledgeGifts extends StatelessWidget {
                     if (snapshot.hasError) {
                       return Center(child: Text("Error"));
                     } else if (snapshot.hasData && snapshot.data != null) {
-                      List events = controller.mylist;
 
                       return ListView.builder(
                         padding: const EdgeInsets.all(8),
-                        itemCount: 10,
+                        itemCount: controller.mylist.length,
                         itemBuilder: (BuildContext, int index) {
                           return Card(
                             child: ListTile(
                               onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  '/giftsList',
-                                  arguments: 'The Biggest Party',
-                                );
+                                // Navigator.pushNamed(
+                                //   context,
+                                //   '/giftsList',
+                                //   arguments: 'The Biggest Party',
+                                // );
                               },
-                              title: const Text("Gift Name"),
-                              subtitle: const Text(
-                                  "Friend: Max\n Due Date: 20/12/2020"),
-                              trailing: index % 2 == 0
-                                  ? StatusContainer(staus: "Recieved")
-                                  : IconButton(
-                                      icon: const Icon(Icons.edit),
+                              title: Text("Gift Name: ${controller.mylist[index]['giftName']}"),
+                              subtitle: Text(
+                                  "Friend: ${controller.mylist[index]['firendName']}\n Due Date: ${controller.mylist[index]['eventDate']}"),
+                              trailing: 
+                              Wrap(
+                                children: [
+                                    StatusContainer(staus: controller.mylist[index]['giftStatus']),
+                                      (controller.mylist[index]['giftStatus']).toLowerCase() == 'pledged' ?
+                                  IconButton(
+                                      icon: const Icon(Icons.check_circle),
                                       color: MyTheme.editButtonColor,
-                                      onPressed: () {},
-                                    ),
+                                      onPressed: () {
+                                        controller.setPurhcasedGiftStatus(controller.mylist[index]['fid'], controller.mylist[index]['gid']);
+                                      },
+                                     )
+                                  : SizedBox.shrink()
+                                ],
+                              )
+                             
                             ),
                           );
                         },
                       );
                     }
                   }
-                  return Center(child: Text("No Events yet"));
+                  return Center(child: Text("No pledged gifts yet"));
                 }),
           ),
         ],

@@ -219,7 +219,8 @@ class _GiftDetailsState extends State<GiftDetails> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () {
-                              controller.pledgeGift(args!['uid'], args!['gid']);
+                              print('pledge $args');
+                              controller.pledgeGift(args!['uid'], args!['gid'],args!['eid'] );
                             },
                             child: const Text("🤝 Pledge Gift 🎁 "),
                           ),
