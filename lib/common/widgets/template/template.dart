@@ -25,6 +25,7 @@ class Template extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // key: TemplateController.scaffoldKey,
       appBar: AppBar(
         title: Text('$title'),
         actions: actions,
@@ -32,11 +33,6 @@ class Template extends StatelessWidget {
       drawer: showDrawer == true
           ? Drawer(
               child: ListView(children: [
-                // DrawerHeader(
-                //   decoration: BoxDecoration(color: MyTheme.primary),
-                //   child: CircleAvatar(backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
-                //   radius: 20,),
-                // ),
                 Card(
                   child: ListTile(
                     title: Text(

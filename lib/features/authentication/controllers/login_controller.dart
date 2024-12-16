@@ -33,7 +33,7 @@ class LoginController {
     //         &&
     sha512.convert(utf8.encode(password2.text)).toString() == passwordHashPref
         ? MainController.navigatorKey.currentState!
-            .pushReplacementNamed('/home')
+            .pushReplacementNamed('/Lhome')
         : MainController.msngrKey.currentState!.showSnackBar(
             SnackBar(content: const Text('Wrong Email or Password')));
   }
@@ -60,7 +60,7 @@ class LoginController {
         print('user local id ${await setCurrentUserLocalId()}');
 
         await syncGiftsStatus();
-        MainController.navigatorKey.currentState!.pushReplacementNamed('/home');
+        MainController.navigatorKey.currentState!.pushReplacementNamed('/Lhome');
       } else {
         MainController.msngrKey.currentState!
             .showSnackBar(SnackBar(content: Text('Wrong Email or Password')));

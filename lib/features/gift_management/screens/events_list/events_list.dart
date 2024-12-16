@@ -92,44 +92,49 @@ class _EventsListState extends State<EventsList> {
                       //     ? controller.myList
                       //     : controller.filtered;
                       print('events $events  ${widget.isFiltered}');
-                      return ListView.builder(
+                      return AnimatedList(
+                        key: controller.eventAnimKey,
                         padding: const EdgeInsets.all(8),
-                        itemCount: events.length,
-                        itemBuilder: (BuildContext, int index) {
-                          return Card(
-                            child: ListTile(
-                              onTap: () {
-                                controller.toGiftsList(index);
-                              },
-                              title: Text("${events[index]['NAME']}"),
-                              subtitle: Text(
-                                  "Category: ${events[index]['CATEGORY']}\n Status: Upcoming"),
-                              trailing: widget.isFriend
-                                  ? SizedBox(height: 0, width: 0)
-                                  : Wrap(
-                                      children: [
-                                        IconButton(
-                                            icon: Icon(Icons.edit),
-                                            color: MyTheme.editButtonColor,
+                        initialItemCount: events.length,
+                        itemBuilder: (BuildContext, int index, anim) {
+                           return SizeTransition(
+                            key: UniqueKey(),
+                            sizeFactor: anim,
+                             child: Card(
+                              child: ListTile(
+                                onTap: () {
+                                  controller.toGiftsList(index);
+                                },
+                                title: Text("${events[index]['NAME']}"),
+                                subtitle: Text(
+                                    "Category: ${events[index]['CATEGORY']}\n Status: Upcoming"),
+                                trailing: widget.isFriend
+                                    ? SizedBox(height: 0, width: 0)
+                                    : Wrap(
+                                        children: [
+                                          IconButton(
+                                              icon: Icon(Icons.edit),
+                                              color: MyTheme.editButtonColor,
+                                              onPressed: () {
+                                                controller.toEditEventForm(index);
+                                              }),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          IconButton(
+                                            icon: Icon(Icons.delete),
+                                            color: MyTheme.primary,
                                             onPressed: () {
-                                              controller.toEditEventForm(index);
-                                            }),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        IconButton(
-                                          icon: Icon(Icons.delete),
-                                          color: MyTheme.primary,
-                                          onPressed: () {
-                                            controller.deleteEvent(
-                                                events[index]['ID']);
-                                            setState(() {});
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                            ),
-                          );
+                                              controller.deleteEvent(
+                                                  events[index]['ID'], index, "${events[index]['NAME']}", "Category: ${events[index]['CATEGORY']}\n Status: Upcoming" );
+                                              // setState(() {});
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                              ),
+                                                       ),
+                           );
                         },
                       );
                     }

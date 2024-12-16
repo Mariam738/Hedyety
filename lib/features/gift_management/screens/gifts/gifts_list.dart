@@ -34,7 +34,9 @@ class _GiftsListState extends State<GiftsList> {
         print("args friend ${controller.args}");
       }
     } else {
+
       final Map? args = ModalRoute.of(context)?.settings.arguments as Map?;
+                print('ddddddd $args');
       if (args != null && !args.isEmpty) {
         controller.id = args['id'];
         controller.name = args['name'];
@@ -88,66 +90,71 @@ class _GiftsListState extends State<GiftsList> {
                           ? controller.myList
                           : controller.filtered;
                       print('snapshot $gifts');
-                      return ListView.builder(
+                      return AnimatedList(
+                        key: controller.giftAnimKey,
                         padding: const EdgeInsets.all(8),
-                        itemCount: gifts.length,
-                        itemBuilder: (context, int index) {
-                          return Card(
-                            // color: index % 2 ==0 ?Colors.amber : null,
-                            child: ListTile(
-                              onTap: () {
-                                widget.isFriend
-                                    ? controller.toFriendGift(
-                                        controller.args['UID'],
-                                        controller.args['GIFTS'][index],
-                                        controller.args['EID'],
-                                        gifts[index]['STATUS']
-                                        )
-                                    : controller.toEdit(gifts[index]);
-                              },
-                              title: Text("${gifts[index]['NAME']}"),
-                              subtitle: Text(
-                                  "Category: ${gifts[index]['CATEGORY']}\n Status: Upcoming"),
-                              trailing: Wrap(
-                                children: [
+                        initialItemCount: gifts.length,
+                        itemBuilder: (context, int index, anim) {
+                          return SizeTransition(
+                            key: UniqueKey(),
+                            sizeFactor: anim,
+                            child: Card(
+                              // color: index % 2 ==0 ?Colors.amber : null,
+                              child: ListTile(
+                                onTap: () {
                                   widget.isFriend
-                                      ? gifts[index]['STATUS'] == "pledged" || gifts[index]['STATUS'] == "purchased"
-                                          ?  gifts[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
-                                          :  IconButton(
-                                              icon: Icon(Icons.handshake,
-                                                  color: Colors.amber),
-                                              tooltip: 'Pledge',
-                                              onPressed: () {})
-                                      : gifts[index]['STATUS'] == "pledged" || gifts[index]['STATUS'] == "purchased"
-                                          ?  gifts[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
-                                          : Wrap(children: [
-                                          IconButton(
-                                            icon: Icon(Icons.edit),
-                                            color: MyTheme.editButtonColor,
-                                            onPressed: () {
-                                              print('pressed $index');
-                                              controller.toEdit(gifts[index]);
-                                            },
-                                          ),
-                                          SizedBox(width: 10),
-                                          IconButton(
-                                            icon: Icon(Icons.delete),
-                                            color: MyTheme.primary,
-                                            onPressed: () async {
-                                              try {
-                                                print("trying deleting gift");
-                                                if (await controller.deleteGift(
-                                                    gifts[index]['ID']))
-                                                  setState(() {});
-                                              } catch (e) {
-                                                print(
-                                                    'Error deleting event ${e}');
-                                              }
-                                            },
-                                          ),
-                                          // SizedBox(width: 10),
-                                        ]),
-                                ],
+                                      ? controller.toFriendGift(
+                                          controller.args['UID'],
+                                          controller.args['GIFTS'][index],
+                                          controller.args['EID'],
+                                          gifts[index]['STATUS']
+                                          )
+                                      : controller.toEdit(gifts[index]);
+                                },
+                                title: Text("${gifts[index]['NAME']}"),
+                                subtitle: Text(
+                                    "Category: ${gifts[index]['CATEGORY']}\n Status: Upcoming"),
+                                trailing: Wrap(
+                                  children: [
+                                    widget.isFriend
+                                        ? gifts[index]['STATUS'] == "pledged" || gifts[index]['STATUS'] == "purchased"
+                                            ?  gifts[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
+                                            :  IconButton(
+                                                icon: Icon(Icons.handshake,
+                                                    color: Colors.amber),
+                                                tooltip: 'Pledge',
+                                                onPressed: () {})
+                                        : gifts[index]['STATUS'] == "pledged" || gifts[index]['STATUS'] == "purchased"
+                                            ?  gifts[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
+                                            : Wrap(children: [
+                                            IconButton(
+                                              icon: Icon(Icons.edit),
+                                              color: MyTheme.editButtonColor,
+                                              onPressed: () {
+                                                print('pressed $index');
+                                                controller.toEdit(gifts[index]);
+                                              },
+                                            ),
+                                            SizedBox(width: 10),
+                                            IconButton(
+                                              icon: Icon(Icons.delete),
+                                              color: MyTheme.primary,
+                                              onPressed: () async {
+                                                try {
+                                                  print("trying deleting gift");
+                                                   controller.deleteGift(
+                                                      gifts[index]['ID'], index, "${gifts[index]['NAME']}", "Category: ${gifts[index]['CATEGORY']}\n Status: Upcoming");
+                                                    // setState(() {});
+                                                } catch (e) {
+                                                  print(
+                                                      'Error deleting event ${e}');
+                                                }
+                                              },
+                                            ),
+                                            // SizedBox(width: 10),
+                                          ]),
+                                  ],
+                                ),
                               ),
                             ),
                           );

@@ -19,7 +19,7 @@ class MyPledgedGiftsController {
 
   Future setPurhcasedGiftStatus (String friendid, String gid) async {
     await fb.setGiftStatus(friendid, gid, 'purchased');
-    MainController.navigatorKey.currentState!.pushReplacementNamed('/myPledgedGifts');
+    MainController.navigatorKey.currentState!.pushReplacementNamed('/LmyPledgedGifts');
     
   }
 

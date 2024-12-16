@@ -4,6 +4,7 @@ import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/features/gift_management/models/gift_model.dart';
 import 'package:hedyety/main_controller.dart';
+import 'package:hedyety/my_theme.dart';
 
 class GiftsListController {
   static final GiftsListController _instance = GiftsListController._internal();
@@ -16,9 +17,27 @@ class GiftsListController {
   var args;
   RealtimeDB fb = RealtimeDB();
   bool? isFriend;
+  final GlobalKey<AnimatedListState> giftAnimKey = GlobalKey();
 
 
   GiftsListController._internal();
+
+void removeItem(int ind, String title, String subtitle) {
+    giftAnimKey.currentState!.removeItem(ind, (_, anim) {
+      return SizeTransition(
+        sizeFactor: anim,
+        child: Card(
+          color: Colors.red.shade900,
+          child: ListTile(
+            title: Text(title),
+            subtitle: Text(subtitle),
+          ),
+        ),
+      );
+    }, duration: const Duration(milliseconds: 300));
+    myList.removeAt(ind);
+  }
+
 
   factory GiftsListController() {
     return _instance;
@@ -34,10 +53,10 @@ class GiftsListController {
     return myList;
   }
 
-  Future<bool> deleteGift(int id) async {
+  Future<bool> deleteGift(int id, int ind, String title, String subtitle) async {
     int res = await GiftModel.deleteGift(id);
     if (res != null) {
-      await readGifts(false);
+      removeItem(ind, title, subtitle);
       return true;
     } else {
       MainController.msngrKey.currentState!.showSnackBar(SnackBar(
@@ -49,11 +68,11 @@ class GiftsListController {
   void toFriendGift(String uid, String gid, String eid, String? status){
     print('toFriend $uid, $gid'); 
     MainController.navigatorKey.currentState!
-        .pushNamed('/giftDetails', arguments: {'uid': uid,'gid':gid, 'eid': eid, 'status':status});
+        .pushNamed('/LgiftDetails', arguments: {'uid': uid,'gid':gid, 'eid': eid, 'status':status});
   }
   void toEdit(gift) {
       MainController.navigatorKey.currentState!
-          .pushNamed('/editGiftForm', arguments: {
+          .pushNamed('/LeditGiftForm', arguments: {
         "id": gift['ID'],
         "name": gift['NAME'],
         "description": gift['DESCRIPTION'],
@@ -79,14 +98,14 @@ class GiftsListController {
 
       filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
       MainController.navigatorKey.currentState!.pop();
-      MainController.navigatorKey.currentState!.pushReplacementNamed('/filteredGiftsList');
+      MainController.navigatorKey.currentState!.pushReplacementNamed('/LfilteredGiftsList');
       return filtered;
   }
 
   
   toAddGift() {
     MainController.navigatorKey.currentState!.pushReplacementNamed(
-        '/addGiftForm',
+        '/LaddGiftForm',
         arguments: {'id': id, 'eventName': name});
   }
   
@@ -113,7 +132,7 @@ class GiftsListController {
 
       filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
       MainController.navigatorKey.currentState!.pop();
-      MainController.navigatorKey.currentState!.pushReplacementNamed('/friendFilteredGiftsList', arguments: args);
+      MainController.navigatorKey.currentState!.pushReplacementNamed('/LfriendFilteredGiftsList', arguments: args);
       return filtered;
   }
   

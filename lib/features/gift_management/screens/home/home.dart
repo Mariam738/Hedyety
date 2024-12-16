@@ -95,26 +95,40 @@ class _HomeState extends State<Home> {
                         map((e) => Map.from(e)).toList();
                         print('future s ${controller.friends}');
                       return
-                  ListView.builder(
+                  AnimatedList(
+                    key: controller.homeAnimKey,
                     padding: const EdgeInsets.all(8),
-                    itemCount: controller.friends.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        child: ListTile(
-                          onTap: () {
-                            controller.toFriendEvents(controller.friends[index]['PHONE']);
-                            // Navigator.pushNamed(
-                            //   context,
-                            //   '/giftsList',
-                            //   arguments: 'args',
-                            // );
-                          },
-                          title: Text("${controller.friends[index]['NAME']}"),
-                          subtitle: Text(
-                              "Upcoming Events: 1\n${controller.friends[index]['PHONE']}"),
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(
-                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
+                    initialItemCount: controller.friends.length,
+                    itemBuilder: (context, index, anim) {
+                      return SizeTransition(
+                        key: UniqueKey(),
+                        sizeFactor: anim,
+                        child: Card(
+                          child: ListTile(
+                            onTap: () {
+                              controller.toFriendEvents(controller.friends[index]['PHONE']);
+                              // Navigator.pushNamed(
+                              //   context,
+                              //   '/giftsList',
+                              //   arguments: 'args',
+                              // );
+                            },
+                            title: Text("${controller.friends[index]['NAME']}"),
+                            subtitle: Text(
+                                "Upcoming Events: 1\n${controller.friends[index]['PHONE']}"),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
+                            ),
+                            trailing:  IconButton(
+                                              icon: Icon(Icons.delete),
+                                              color: MyTheme.primary,
+                                              onPressed: () {
+                                                controller.deleteFriend(
+                                                    controller.friends[index]['ID'], index, "${controller.friends[index]['NAME']}",  "Upcoming Events: 1\n${controller.friends[index]['PHONE']}");
+                                                // setState(() {});
+                                              },
+                            )
                           ),
                         ),
                       );

@@ -45,7 +45,7 @@ class GiftDetailsController {
         print('$res in  addGift');
     if (res != null) {
       print('addGifts $res');
-     MainController.navigatorKey.currentState!.pushNamedAndRemoveUntil('/giftsList', (Route<dynamic> route) => false, arguments: {"id": id});
+     MainController.navigatorKey.currentState!.pushNamedAndRemoveUntil('/RgiftsList', (Route<dynamic> route) => false, arguments: {"id": id});
            print('addGifts $res');
 
     } else {

@@ -61,7 +61,7 @@ class SignupController{
         UserModel usr = UserModel(name: username.text.trim(), email: email.text.trim(), phone: phone.text, password: password.text.trim(), prefrence: true);
         saveDataCloud(usr.toJson(), _auth.getUserId()!);
         await FirebaseMessaging.instance.subscribeToTopic(await _auth.getUserId()!);
-        MainController.navigatorKey.currentState!.pushReplacementNamed('/login');
+        MainController.navigatorKey.currentState!.pushReplacementNamed('/Llogin');
         // navigatorKey.of(context).pushReplacementNamed(context, '/login');
       }
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/features/gift_management/models/user_model.dart';
+import 'package:hedyety/features/gift_management/screens/home/home_controller.dart';
 import 'package:hedyety/main_controller.dart';
 
 class AddFriendController {
@@ -19,7 +20,7 @@ class AddFriendController {
       // ));
       int? res = await UserModel.addFriend(name.text, email.text, phone.text, await SharedPref().getCurrentUid());
       if(res != null)
-        MainController.navigatorKey.currentState!.pushReplacementNamed('/home');
+        MainController.navigatorKey.currentState!.pushReplacementNamed('/Rhome');
     }
   }
 }

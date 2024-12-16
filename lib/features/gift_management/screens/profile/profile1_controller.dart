@@ -34,6 +34,6 @@ class Profile1Controller {
   }
 
   toMyPledgedGifts() {
-    MainController.navigatorKey.currentState!.pushReplacementNamed('/myPledgedGifts');
+    MainController.navigatorKey.currentState!.pushReplacementNamed('/RmyPledgedGifts');
   }
 }

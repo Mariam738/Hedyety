@@ -112,6 +112,16 @@ class UserModel {
     }
   }
 
+  static deleteFriend(int id, int userId) async {
+    try {
+      var res = await mydb.deleteData("DELETE FROM FRIENDS WHERE FRIENDID=$id AND USERID=$userId");
+      return res;
+    } catch (e) {
+      print('error in deleteEvent $e');
+      return null;
+    }
+  }
+
   toJson() {
     return {
       'name': name,

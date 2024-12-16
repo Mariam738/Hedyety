@@ -37,7 +37,7 @@ class EventFormController {
       
       if(res != null){      
           MainController.navigatorKey.currentState!
-              .pushReplacementNamed('/eventsList');
+              .pushReplacementNamed('/ReventsList');
        } else  MainController.msngrKey.currentState!.showSnackBar(
               SnackBar(content: const Text('Error. Sign up or login first')));
     }
