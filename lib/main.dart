@@ -24,7 +24,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 
-
 import 'Repository/local_database.dart';
 
 void init() async {
@@ -119,34 +118,34 @@ class MyApp extends StatelessWidget{
             },
             
             // initialRoute: home,
-            routes: {
-              '/home': (context) => Home(),
+            // routes: {
+            //   '/home': (context) => Home(),
 
-              '/eventsList': (context) => EventsList(isFriend: false),
-              '/friendEventsList': (context) => EventsList(isFriend: true),
+            //   '/eventsList': (context) => EventsList(isFriend: false),
+            //   '/friendEventsList': (context) => EventsList(isFriend: true),
 
-              '/filteredEventsList': (context) => EventsList(isFriend: false, isFiltered: true,),
-              '/friendFilteredEventsList': (context) => EventsList(isFriend: true, isFiltered: true,),
-              '/addEventForm': (context) => EventForm(isEdit: false),
-              '/editEventForm': (context) => EventForm(isEdit: true),
+            //   '/filteredEventsList': (context) => EventsList(isFriend: false, isFiltered: true,),
+            //   '/friendFilteredEventsList': (context) => EventsList(isFriend: true, isFiltered: true,),
+            //   '/addEventForm': (context) => EventForm(isEdit: false),
+            //   '/editEventForm': (context) => EventForm(isEdit: true),
 
-              '/giftsList': (context) => GiftsList(isFriend: false),
-              '/filteredGiftsList': (context) => GiftsList(isFriend: false, isFiltered: true,),
-              '/friendGiftsList': (context) => GiftsList(isFriend: true),
-              '/friendFilteredGiftsList': (context) => GiftsList(isFriend: true, isFiltered: true),
+            //   '/giftsList': (context) => GiftsList(isFriend: false),
+            //   '/filteredGiftsList': (context) => GiftsList(isFriend: false, isFiltered: true,),
+            //   '/friendGiftsList': (context) => GiftsList(isFriend: true),
+            //   '/friendFilteredGiftsList': (context) => GiftsList(isFriend: true, isFiltered: true),
 
-              '/addGiftForm': (context) => GiftDetails(isFriend: false, isAdd: true, isEdit: false,),
-              '/editGiftForm': (context) => GiftDetails(isFriend: false, isAdd: false, isEdit: true),
-              '/giftDetails': (context) => GiftDetails(isFriend: true, isAdd: false, isEdit: false),
+            //   '/addGiftForm': (context) => GiftDetails(isFriend: false, isAdd: true, isEdit: false,),
+            //   '/editGiftForm': (context) => GiftDetails(isFriend: false, isAdd: false, isEdit: true),
+            //   '/giftDetails': (context) => GiftDetails(isFriend: true, isAdd: false, isEdit: false),
 
-              '/profile': (context) => Profile(),
-              '/myPledgedGifts': (context) => MyPledgeGifts(),
+            //   '/profile': (context) => Profile(),
+            //   '/myPledgedGifts': (context) => MyPledgeGifts(),
 
-              '/signUp': (context) => SignUp(),
-              '/login': (context) => Login(),
+            //   '/signUp': (context) => SignUp(),
+            //   '/login': (context) => Login(),
 
-              '/addFriendFrom': (context) => AddFriendForm(),
-            },
+            //   '/addFriendFrom': (context) => AddFriendForm(),
+            // },
             theme: MyTheme.themeData,
             home: controller.isSignedUp! ? Login() : SignUp(),
             // home: Home(),

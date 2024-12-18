@@ -42,6 +42,8 @@ class _EventsListState extends State<EventsList> {
   @override
   Widget build(BuildContext context) {
     print('filter in build ${controller.myList}');
+    controller.eventAnimKey = GlobalKey();
+
     return Template(
       title: "Events List",
       actions: [
@@ -96,6 +98,7 @@ class _EventsListState extends State<EventsList> {
                         key: controller.eventAnimKey,
                         padding: const EdgeInsets.all(8),
                         initialItemCount: events.length,
+                        
                         itemBuilder: (BuildContext, int index, anim) {
                            return SizeTransition(
                             key: UniqueKey(),
@@ -105,7 +108,7 @@ class _EventsListState extends State<EventsList> {
                                 onTap: () {
                                   controller.toGiftsList(index);
                                 },
-                                title: Text("${events[index]['NAME']}"),
+                                title: Text("${events?[index]['NAME']}"),
                                 subtitle: Text(
                                     "Category: ${events[index]['CATEGORY']}\n Status: Upcoming"),
                                 trailing: widget.isFriend

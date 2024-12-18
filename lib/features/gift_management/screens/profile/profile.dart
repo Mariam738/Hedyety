@@ -20,12 +20,13 @@ class _ProfileState extends State<Profile> {
     return Column(
       children: [
         CarouselSlider(
+          key: ValueKey('Slider'),
           items: [Profile1(), Profile2()],
           options: CarouselOptions(
             height: MediaQuery.of(context).size.height * 0.95,
             onPageChanged: (value, _) {
               setState(() {
-                _currentPage = value ;
+                _currentPage = value;
               });
             },
             viewportFraction: 1,
@@ -40,12 +41,12 @@ class _ProfileState extends State<Profile> {
                 for (int i = 0; i < 2; i++)
                   Container(
                     margin: const EdgeInsets.all(5),
-                    height:  4,
+                    height: 4,
                     width: 20,
                     decoration: BoxDecoration(
-                      color: i == _currentPage ? MyTheme.primary: Colors.grey,
-                      borderRadius: BorderRadius.circular(20)
-                    ),
+                        color:
+                            i == _currentPage ? MyTheme.primary : Colors.grey,
+                        borderRadius: BorderRadius.circular(20)),
                   )
               ],
             ),

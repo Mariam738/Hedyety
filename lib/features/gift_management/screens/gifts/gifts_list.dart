@@ -47,6 +47,7 @@ class _GiftsListState extends State<GiftsList> {
 
   @override
   Widget build(BuildContext context) {
+    controller.giftAnimKey = GlobalKey();
     return Template(
       title: "Gifts List",
       actions: [

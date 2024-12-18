@@ -25,7 +25,7 @@ class EventsListController {
   var args;
   RealtimeDB fb = RealtimeDB();
   bool? isFriend;
-  final GlobalKey<AnimatedListState> eventAnimKey = GlobalKey();
+   GlobalKey<AnimatedListState> eventAnimKey = GlobalKey();
 
   EventsListController._internal();
 

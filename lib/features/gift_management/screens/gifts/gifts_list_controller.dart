@@ -17,7 +17,7 @@ class GiftsListController {
   var args;
   RealtimeDB fb = RealtimeDB();
   bool? isFriend;
-  final GlobalKey<AnimatedListState> giftAnimKey = GlobalKey();
+  GlobalKey<AnimatedListState> giftAnimKey = GlobalKey();
 
 
   GiftsListController._internal();
