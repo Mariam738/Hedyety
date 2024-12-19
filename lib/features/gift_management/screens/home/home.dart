@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:accordion/accordion.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
@@ -11,7 +12,6 @@ import 'package:hedyety/my_theme.dart';
 import '../../models/user_model.dart';
 
 class Home extends StatefulWidget {
-  
   @override
   State<Home> createState() => _HomeState();
 }
@@ -28,6 +28,8 @@ class _HomeState extends State<Home> {
       child: Column(
         children: [
           /// Create Event/List Button
+          if (MediaQuery.of(context).orientation != Orientation.landscape)
+
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -72,105 +74,169 @@ class _HomeState extends State<Home> {
                 icon: Icon(Icons.clear, color: Colors.red.shade900),
                 onPressed: () {
                   controller.searchEditing.clear();
-                  setState(()  {});
+                  setState(() {});
                 },
               ),
             ),
           ),
 
           /// List of Friends
-           Expanded(
+          Expanded(
             child: FutureBuilder(
                 future: controller.getFriends(),
                 builder: (BuildContext, snapshot) {
-                  if(snapshot.connectionState ==ConnectionState.waiting){
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
-                  }
-                  else if(snapshot.connectionState ==ConnectionState.done) {
+                  } else if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasError) {
-                      return Center(child: Text("Error"));
-                    }
-                    else if (snapshot.hasData && snapshot.data != null) {
-                      List friends = (snapshot.data as List).
-                        map((e) => Map.from(e)).toList();
-                        print('future s ${controller.friends}');
-                      return
-                  AnimatedList(
-                    key: controller.homeAnimKey,
-                    padding: const EdgeInsets.all(8),
-                    initialItemCount: controller.friends.length,
-                    itemBuilder: (context, index, anim) {
-                      return SizeTransition(
-                        key: UniqueKey(),
-                        sizeFactor: anim,
-                        child: Card(
-                          child: ListTile(
-                            onTap: () {
-                              controller.toFriendEvents(controller.friends[index]['PHONE']);
-                              // Navigator.pushNamed(
-                              //   context,
-                              //   '/giftsList',
-                              //   arguments: 'args',
-                              // );
-                            },
-                            title: Text("${controller.friends[index]['NAME']}"),
-                            subtitle: Text(
-                                "Upcoming Events: 1\n${controller.friends[index]['PHONE']}"),
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
+                      return Center(child: Text("Error ${snapshot.error}"));
+                    } else if (snapshot.hasData && snapshot.data != null) {
+                      List friends = (snapshot.data as List)
+                          .map((e) => Map.from(e))
+                          .toList();
+                      print('future s ${controller.friends}');
+                      return AnimatedList(
+                        key: controller.homeAnimKey,
+                        padding: const EdgeInsets.all(8),
+                        initialItemCount: controller.friends.length,
+                        itemBuilder: (context, index, anim) {
+                          return SizeTransition(
+                            key: UniqueKey(),
+                            sizeFactor: anim,
+                            child: Card(
+                              child: ListTile(
+                                  onTap: () {
+                                    controller.toFriendEvents(
+                                        controller.friends[index]['PHONE']);
+                                    // Navigator.pushNamed(
+                                    //   context,
+                                    //   '/giftsList',
+                                    //   arguments: 'args',
+                                    // );
+                                  },
+                                  title: Text(
+                                      "${controller.friends[index]['NAME']}"),
+                                  // subtitle: Text(
+                                  //     "Upcoming Events: 1\n${controller.friends[index]['PHONE']}"),
+                                  subtitle: StreamBuilder(
+                                    stream: controller.getEventStream(
+                                        controller.friends[index]['UID']),
+                                    builder: (context,
+                                        AsyncSnapshot<DatabaseEvent> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Text(
+                                            "Upcoming Events: Loading...");
+                                      } else if (snapshot.hasError) {
+                                        return Text("Error ${snapshot.error}");
+                                      } else if (!snapshot.hasData) {
+                                        return Text("No data yet.");
+                                      }
+                                      return Text(
+                                          "Upcoming Events: ${snapshot.data?.snapshot.children.length}");
+                                    },
+                                  ),
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.delete),
+                                    color: MyTheme.primary,
+                                    onPressed: () {
+                                      controller.deleteFriend(
+                                          controller.friends[index]['ID'],
+                                          index,
+                                          "${controller.friends[index]['NAME']}",
+                                          "Upcoming Events: 1\n${controller.friends[index]['PHONE']}");
+                                      // setState(() {});
+                                    },
+                                  )),
                             ),
-                            trailing:  IconButton(
-                                              icon: Icon(Icons.delete),
-                                              color: MyTheme.primary,
-                                              onPressed: () {
-                                                controller.deleteFriend(
-                                                    controller.friends[index]['ID'], index, "${controller.friends[index]['NAME']}",  "Upcoming Events: 1\n${controller.friends[index]['PHONE']}");
-                                                // setState(() {});
-                                              },
-                            )
-                          ),
-                        ),
+                          );
+                        },
                       );
-                    },
-                  );
-                    
-                     
                     }
                   }
                   return Center(child: Text("No friends yet"));
-
-                }
-            ),
+                }),
           ),
 
-      
           /// Add Friend Manually Button
-          SizedBox(
-            width: double.infinity,
+          // MediaQuery.of(context).orientation == Orientation.portrait)?
+
+          // SizedBox.shrink(): 
+          (MediaQuery.of(context).orientation == Orientation.landscape)? 
+           Wrap(
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width/3 - 10 - 16 *2,
+                child:  ElevatedButton(
+                  onPressed: () {
+                    controller.toAddFriendFrom();
+                  },
+                  child: const Text("Add Friend Manually", textAlign: TextAlign.center,),
+                ),
+              ),
+              
+              const SizedBox(width: 16),
+              
+              // Add Friend From Contract Button
+              SizedBox(
+                width:  MediaQuery.of(context).size.width/3 - 10 - 16 ,
+               child:  OutlinedButton(
+                  onPressed: () async {
+                    await controller.addContact();
+                    setState(() {});
+                  },
+                  child: const Text("Add Friend From My Contact List"),
+                ),
+              ),
+                            const SizedBox(width: 16),
+
+              // Add Events Button
+              SizedBox(
+            width:  MediaQuery.of(context).size.width/3 - 10 - 16 ,
             child: ElevatedButton(
               onPressed: () {
-                controller.toAddFriendFrom();
+                controller.toEventForm();
               },
-              child: const Text("Add Friend Manually"),
+              child: const Text("Create Your Own Event/List"),
             ),
           ),
-
-          const SizedBox(height: 16),
-
-          /// Add Friend From Contract Button
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () async {
-                await controller.addContact();
-                setState(() {});
-              },
-              child: const Text("Add Friend From My Contact List"),
-            ),
+            ],
+          ) :
+          Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    controller.toAddFriendFrom();
+                  },
+                  child: const Text("Add Friend Manually"),
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              /// Add Friend From Contract Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    await controller.addContact();
+                    setState(() {});
+                  },
+                  child: const Text("Add Friend From My Contact List"),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
+    
   }
 }
+

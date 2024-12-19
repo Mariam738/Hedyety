@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/containers/status_container.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
@@ -71,7 +72,87 @@ class _GiftsListState extends State<GiftsList> {
       ],
       child: Column(
         children: [
-          /// List of Events
+          /// Freind List of Events
+          widget.isFriend == true
+              ? Expanded(
+                  child: StreamBuilder(
+                    stream: controller.getGiftStream(), // The stream to listen to
+                    builder: (BuildContext context,
+                        AsyncSnapshot<DatabaseEvent> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        Center(
+                            child: CircularProgressIndicator(
+                          color: MyTheme.primary,
+                        ));
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text("Error ${snapshot.error}"));
+                      } else if (!snapshot.hasData) {
+                        return Center(child: Text("No data yet."));
+                      }
+                      {
+
+                        Map<dynamic, dynamic> map =
+                            snapshot.data?.snapshot.value as dynamic ?? {};
+                        List<dynamic> gifts = [];
+                        List<dynamic> ids = [];
+                        gifts.clear();
+                        gifts = map.values.toList();
+                        ids = map.keys.toList();
+                        for (int i = 0; i < gifts.length; i++) 
+                          gifts[i]['id'] = ids[i]; 
+                          controller.myList.clear();
+                        controller.myList = gifts;
+                        if(widget.isFiltered== true){ controller.filterFriend();print('filtttttered ${controller.args}');}
+                                                // return Center(child: Text("$gifts"));
+
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(8),
+                          itemCount: controller.myList.length,
+                          itemBuilder: (
+                            BuildContext,
+                            int index,
+                          ) {
+                            return Card(
+                              child: ListTile(
+                                onTap: () {
+                                  print('argsss ${controller.args} $ids');
+                                  widget.isFriend
+                                      ? controller.toFriendGift(
+                                          controller.args['uid'],
+                                          controller.myList[index]['id'],
+                                          controller.args['eid'],
+                                           controller.myList[index]['STATUS']
+                                          )
+                                      : controller.toEdit( controller.myList[index]);
+                                },
+                                title: Text("${controller.myList[index]['NAME']}"),
+                                subtitle: Text(
+                                    "Category: ${controller.myList[index]['CATEGORY']}\n Status: Upcoming"),
+                                trailing: Wrap(
+                                  children: [
+                                          controller.myList[index]['STATUS'] == "pledged" ||  controller.myList[index]['STATUS'] == "purchased"
+                                            ?   controller.myList[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
+                                            :  IconButton(
+                                                icon: Icon(Icons.handshake,
+                                                    color: Colors.amber),
+                                                tooltip: 'Pledge',
+                                                onPressed: () {})
+                                        
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    },
+                  ),
+                )
+              : SizedBox.shrink(),
+
+
+          /// List of Gifts
+          widget.isFriend == false ? 
           Expanded(
             child: FutureBuilder(
                 future: widget.isFriend == false
@@ -165,7 +246,7 @@ class _GiftsListState extends State<GiftsList> {
                   }
                   return Center(child: Text("No gifts yet"));
                 }),
-          ),
+          ) : SizedBox.shrink(),
 
           /// Add New Gift Button
           widget.isFriend

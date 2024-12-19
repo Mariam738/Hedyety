@@ -28,7 +28,7 @@ class RealtimeDB {
           key = events[i].eid;
         print('publishUserEvents $key');
         await _fb.ref('/events/$uid/$key').set(events[i].toJson());
-        var map = await publishUserGift(gifts[i], uid);
+        var map = await publishUserGift(gifts[i], uid, key);
         await _fb.ref('/events/$uid/$key/gifts').set(map);
         // await _fb.ref('/events/$uid/$key/gifts').set(await publishUserGift(gifts[i], uid) as Map<String, Object>);
       }
@@ -39,24 +39,24 @@ class RealtimeDB {
     }
   }
 
-  Future<Map> publishUserGift(List gifts, String uid) async {
+  Future<Map> publishUserGift(List gifts, String uid, String eid) async {
     Map<String, bool> map = {};
     for (int i = 0; i < gifts.length; i++) {
       String key;
       print('publishUserGift ${gifts[i].toJson()}');
       if (gifts[i].gid == null) {
-        key = _fb.ref('/gifts/$uid').push().key!;
+        key = _fb.ref('/gifts/$uid/$eid').push().key!;
         GiftModel.editGid(key!, gifts[i].id!);
       } else
         key = gifts[i].gid;
       print('publishUserGift key $key');
-      await _fb.ref('/gifts/$uid/$key').set(gifts[i].toJson());
+      await _fb.ref('/gifts/$uid/$eid/$key').set(gifts[i].toJson());
       map[key] = true;
     }
     return map;
   }
 
-  Future getFriendEventsByPhone(String phone) async {
+  Future getFriendIdByPhone(String phone) async {
     final snap = await _fb.ref('/phones/$phone').get();
     if (snap.exists) return snap.value;
     return null;
@@ -148,6 +148,18 @@ class RealtimeDB {
 
   Future setGiftStatus(String friendid, String gid, String status) async {
     await _fb.ref('/gifts/$friendid/$gid').update({'STATUS': status});
+  }
+
+  // Streams 
+  Stream<DatabaseEvent>? getEventStream(String uid){
+    return _fb.ref('/events/$uid')?.onValue;
+  }
+  Stream<DatabaseEvent>? getFilteredEventStream(String uid){
+    return _fb.ref('/events/$uid').orderByChild('name').onValue;
+  }
+
+  Stream<DatabaseEvent>? getGiftStream(String uid, String eid){
+    return _fb.ref('/gifts/$uid/$eid')?.onValue;
   }
 
   // Future setFCMToken(String uid, String token) async {

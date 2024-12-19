@@ -110,6 +110,7 @@ void removeItem(int ind, String title, String subtitle) {
   }
   
   Future readFriendGifts() async  {
+    print(args);
     var res = await fb.getGiftsById(args['UID'], args['GIFTS']);
     myList = [];
     myList.addAll(res);
@@ -117,12 +118,19 @@ void removeItem(int ind, String title, String subtitle) {
   }
 
   filterForFriend(bool isAscending, List category, List status) async {
-    if(category. isEmpty) category = MyConstants.categoryList;
-    if(status. isEmpty) status = MyConstants.eventStatusList;
-    myList = await readFriendGifts();
-    print('myList filterfriend $myList');
     
-      isAscending
+      MainController.navigatorKey.currentState!.pop();
+      MainController.navigatorKey.currentState!.pushReplacementNamed('/LfriendFilteredGiftsList', arguments:{'uid': args['uid'], 'eid':args['eid'], 'isAscending': isAscending, 'category':category, 'status': status});
+      return filtered;
+  }
+
+  filterFriend() {
+    bool isAscending = args['isAscending'];
+    List category  = args['category'];
+    List status = args['status'];
+   if(category. isEmpty) category = MyConstants.categoryList;
+    if(status. isEmpty) status = MyConstants.eventStatusList;
+  isAscending
           ? myList.sort((a, b) {
               return a['NAME'].compareTo(b['NAME']);
             })
@@ -131,9 +139,12 @@ void removeItem(int ind, String title, String subtitle) {
             });
 
       filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
-      MainController.navigatorKey.currentState!.pop();
-      MainController.navigatorKey.currentState!.pushReplacementNamed('/LfriendFilteredGiftsList', arguments: args);
-      return filtered;
+    myList = filtered;
+    return;
+
   }
-  
+   getGiftStream() {
+    return fb.getGiftStream(args['uid'], args['eid']);
+  }
+
 }

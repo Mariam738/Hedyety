@@ -26,6 +26,17 @@ class UserModel {
     }
   }
 
+  static setUid(int id, String uid) async{
+    try {
+      //  'EMAIL' = "$email",
+      int res = await mydb.updateData(
+          '''UPDATE 'USERS' SET 'UID' = "$uid" WHERE ID= "$id"''');
+      print("the value is $res");
+    } catch (e) {
+      print("Error updating user :( $e");
+    }
+  }
+
   static addContact(String name, String phone) async {
     try {
       int res = await mydb.insertData(
@@ -115,7 +126,8 @@ class UserModel {
   static deleteFriend(int id, int userId) async {
     try {
       var res = await mydb.deleteData("DELETE FROM FRIENDS WHERE FRIENDID=$id AND USERID=$userId");
-      return res;
+      var res2 = await mydb.deleteData("DELETE FROM USERS WHERE ID=$id");
+      return res2;
     } catch (e) {
       print('error in deleteEvent $e');
       return null;

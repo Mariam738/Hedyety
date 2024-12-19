@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dropdown_textfield/dropdown_textfield.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
@@ -73,6 +74,16 @@ class EventsListController {
                 'Delete all gifts associated with this event first.')));
   }
 
+  toFriendGiftList( String eid){
+    MainController.navigatorKey.currentState!
+          .pushReplacementNamed('/LfriendGiftsList', arguments: {
+        'uid': args['uid'],
+        'eid': eid
+      });
+      // print(
+      //     'args > gifts $args ${myList[index]['GIFTS']} ${myList[index]['ID']}');
+  }
+
   toGiftsList(int index) {
     if (isFriend!) {
       //  MainController.navigatorKey.currentState!.pushReplacement(CustomPageRoutes(
@@ -135,8 +146,9 @@ class EventsListController {
     return filtered;
   }
 
+
   Future readFriendEvents() async {
-    Map res = await fb.getEventsByUid(args);
+    Map res = await fb.getEventsByUid(args['uid']);
     Map<String, dynamic> casted = Map<String, dynamic>.from(res);
     List<Map> list = casted.entries.map((entry) {
       String id = entry.key as String;
@@ -156,24 +168,34 @@ class EventsListController {
   }
 
   filterForFriend(bool isAscending, List category, List status) async {
-    print('hennnnnnaa');
-    if (category.isEmpty) category = MyConstants.eventsList;
-    if (status.isEmpty) status = MyConstants.eventStatusList;
-    myList = await readFriendEvents();
-    print('myList filterfriend $myList');
-
-    isAscending
-        ? myList.sort((a, b) {
-            return a['NAME'].compareTo(b['NAME']);
-          })
-        : myList.sort((a, b) {
-            return b['NAME'].compareTo(a['NAME']);
-          });
-
-    filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
     MainController.navigatorKey.currentState!.pop();
     MainController.navigatorKey.currentState!
-        .pushReplacementNamed('/LfriendFilteredEventsList', arguments: args);
-    return filtered;
+        .pushReplacementNamed('/LfriendFilteredEventsList', arguments: {'uid' :args['uid'], 'isAscending': isAscending, 'category':category, 'status': status});
+    return;
   }
+
+  filterFriend(){
+    bool isAscending = args['isAscending'];
+    List category  = args['category'];
+    List status = args['status'];
+   if (category.isEmpty) category = MyConstants.eventsList;
+    if (status.isEmpty) status = MyConstants.eventStatusList;
+       isAscending
+        ? myList.sort((a, b) {
+            return a['name'].compareTo(b['name']);
+          })
+        : myList.sort((a, b) {
+            return b['name'].compareTo(a['name']);
+          });
+
+    filtered = myList.where((e) => category.contains(e['category'])).toList();
+    myList = filtered;
+    return;
+  }
+
+  getEventStream() {
+    return fb.getEventStream(args['uid']);
+  }
+
+  
 }

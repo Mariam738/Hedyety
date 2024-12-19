@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_contact_picker/model/contact.dart';
 import 'package:fluttercontactpicker/fluttercontactpicker.dart';
@@ -68,10 +69,22 @@ class HomeController {
     getFriends();
   }
 
+  syncFriendsUid() async {
+    for(int i=0; i< friends.length; i++){
+     if( friends[i]['UID'] == null){
+      String? uid = await fb.getFriendIdByPhone(friends[i]['PHONE']);
+      if(uid!=null){
+        await UserModel.setUid(friends[i]['ID'], uid);
+        friends[i]['ID']=uid;
+      }
+     }
+    }
+  }
   Future getFriends() async {
     friends = [];
     var res = await UserModel.getFriends(await SharedPref().getCurrentUid());
     friends.addAll(res);
+    await syncFriendsUid();
     print('friends searchc ${searchEditing.text}');
     if (searchEditing.text.isEmpty == false && searchEditing.text != null)
       search(searchEditing.text.toLowerCase());
@@ -96,13 +109,16 @@ class HomeController {
   }
 
   toFriendEvents(String phone) async {
-    var res = await fb.getFriendEventsByPhone(phone);
+    var res = await fb.getFriendIdByPhone(phone);
     if (res != null)
       MainController.navigatorKey.currentState!
-          .pushReplacementNamed('/LfriendEventsList', arguments: res);
+          .pushReplacementNamed('/LfriendEventsList', arguments: {'uid': res});
     else
       MainController.msngrKey.currentState!.showSnackBar(SnackBar(
           content:
               Text('Sorry but your friend do not have Hedyety account.🙁')));
+  }
+  getEventStream(uid) {
+    return fb.getEventStream(uid);
   }
 }
