@@ -35,6 +35,7 @@ class SignUp extends StatelessWidget {
                   prefixIcon: const Icon(Icons.person),
                   labelText: "Username",
                   controller: controller.username,
+                  validator: MyConstants.usernamaeValidator,
                   // validator:
                 ),
                 const SizedBox(height: 16),
@@ -55,6 +56,7 @@ class SignUp extends StatelessWidget {
                   prefixIcon: const Icon(Icons.phone),
                   labelText: "Phone",
                   controller: controller.phone,
+                  validator: MyConstants.phoneValidator,
                 ),
                 const SizedBox(height: 16),
 
@@ -65,6 +67,7 @@ class SignUp extends StatelessWidget {
                   labelText: "Password",
                   obscureText: true,
                   controller: controller.password,
+                  validator: MyConstants.password2Validator,
                 ),
                 const SizedBox(height: 16),
 

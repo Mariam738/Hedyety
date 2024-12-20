@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
-import 'package:hedyety/features/gift_management/models/user_model.dart';
+import 'package:hedyety/Repository/models/user_model.dart';
 import 'package:hedyety/main_controller.dart';
 
 class Profile1Controller {

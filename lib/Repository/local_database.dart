@@ -47,6 +47,7 @@ class LocalDatabse {
       db.execute('''CREATE TABLE IF NOT EXISTS 'GIFTS' (
       'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
       'GID' TEXT,
+      'URL' TEXT,
       'NAME' TEXT,
       'DESCRIPTION' TEXT,
       'CATEGORY' TEXT,

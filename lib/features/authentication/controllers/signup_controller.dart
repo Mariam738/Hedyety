@@ -8,7 +8,7 @@ import 'package:hedyety/Repository/auth_service.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/features/authentication/screens/sign_up.dart';
-import 'package:hedyety/features/gift_management/models/user_model.dart';
+import 'package:hedyety/Repository/models/user_model.dart';
 import 'package:hedyety/main.dart';
 import 'package:hedyety/main_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // important
@@ -64,6 +64,8 @@ class SignupController{
         MainController.navigatorKey.currentState!.pushReplacementNamed('/Llogin');
         // navigatorKey.of(context).pushReplacementNamed(context, '/login');
       }
+      else 
+      MainController.msngrKey.currentState!.showSnackBar(SnackBar(content: Text("This account already exist. Try logging in")));
     }
   }
 

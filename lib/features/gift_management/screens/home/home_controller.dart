@@ -5,7 +5,7 @@ import 'package:fluttercontactpicker/fluttercontactpicker.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/common/custom_page_routes.dart';
-import 'package:hedyety/features/gift_management/models/user_model.dart';
+import 'package:hedyety/Repository/models/user_model.dart';
 import 'package:hedyety/features/gift_management/screens/events_list/event_form.dart';
 import 'package:hedyety/features/gift_management/screens/home/add_friend_form.dart';
 import 'package:hedyety/main_controller.dart';
@@ -119,6 +119,8 @@ class HomeController {
               Text('Sorry but your friend do not have Hedyety account.🙁')));
   }
   getEventStream(uid) {
+    if(uid!=null)
     return fb.getEventStream(uid);
+    return null;
   }
 }

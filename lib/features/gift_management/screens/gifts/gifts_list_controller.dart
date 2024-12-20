@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/constants/constants.dart';
-import 'package:hedyety/features/gift_management/models/gift_model.dart';
+import 'package:hedyety/Repository/models/gift_model.dart';
 import 'package:hedyety/main_controller.dart';
 import 'package:hedyety/my_theme.dart';
 
@@ -79,13 +79,15 @@ void removeItem(int ind, String title, String subtitle) {
         "category": gift['CATEGORY'],
         "price": gift['PRICE'],
         "eventid": gift['EVENTSID'],
+        "status": gift['STATUS'],
+        "url": gift['URL']
       });
   }
 
   filter(bool isAscending, List category, List status) async {
     if(category. isEmpty) category = MyConstants.categoryList;
-    if(status. isEmpty) status = MyConstants.eventStatusList;
-    myList = await readGifts(false);
+    if(status. isEmpty) status = MyConstants.giftStatusList;
+    myList = (await readGifts(false));
     print('myList $myList');
     
       isAscending
@@ -95,8 +97,14 @@ void removeItem(int ind, String title, String subtitle) {
           : myList.sort((a, b) {
               return b['NAME'].compareTo(a['NAME']);
             });
+    print('myList $myList');
 
       filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
+          print('myList $filtered');
+
+            filtered = filtered.where((e) => status.contains(e['STATUS'])).toList();
+          print('myList $filtered');
+
       MainController.navigatorKey.currentState!.pop();
       MainController.navigatorKey.currentState!.pushReplacementNamed('/LfilteredGiftsList');
       return filtered;
@@ -129,7 +137,7 @@ void removeItem(int ind, String title, String subtitle) {
     List category  = args['category'];
     List status = args['status'];
    if(category. isEmpty) category = MyConstants.categoryList;
-    if(status. isEmpty) status = MyConstants.eventStatusList;
+    if(status. isEmpty) status = MyConstants.giftStatusList;
   isAscending
           ? myList.sort((a, b) {
               return a['NAME'].compareTo(b['NAME']);
@@ -139,12 +147,13 @@ void removeItem(int ind, String title, String subtitle) {
             });
 
       filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
+      filtered = myList.where((e) => status.contains(e['STATUS'])).toList();
     myList = filtered;
     return;
 
   }
    getGiftStream() {
-    return fb.getGiftStream(args['uid'], args['eid']);
+    return fb.getGiftsStream(args['uid'], args['eid']);
   }
 
 }

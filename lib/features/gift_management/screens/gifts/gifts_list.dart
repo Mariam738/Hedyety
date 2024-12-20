@@ -127,11 +127,11 @@ class _GiftsListState extends State<GiftsList> {
                                 },
                                 title: Text("${controller.myList[index]['NAME']}"),
                                 subtitle: Text(
-                                    "Category: ${controller.myList[index]['CATEGORY']}\n Status: Upcoming"),
+                                    "Category: ${controller.myList[index]['CATEGORY']}\n Price: ${controller.myList[index]['PRICE']}"),
                                 trailing: Wrap(
                                   children: [
-                                          controller.myList[index]['STATUS'] == "pledged" ||  controller.myList[index]['STATUS'] == "purchased"
-                                            ?   controller.myList[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
+                                          controller.myList[index]['STATUS'] != 'Unpledged'
+                                            ?    StatusContainer(staus: controller.myList[index]['STATUS']) 
                                             :  IconButton(
                                                 icon: Icon(Icons.handshake,
                                                     color: Colors.amber),
@@ -155,9 +155,7 @@ class _GiftsListState extends State<GiftsList> {
           widget.isFriend == false ? 
           Expanded(
             child: FutureBuilder(
-                future: widget.isFriend == false
-                    ? controller.readGifts(widget.isFiltered)
-                    : controller.readFriendGifts(),
+                future:  controller.readGifts(widget.isFiltered),
                 builder: (BuildContext, snapshot) {
                   print(snapshot.connectionState);
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -184,30 +182,15 @@ class _GiftsListState extends State<GiftsList> {
                               // color: index % 2 ==0 ?Colors.amber : null,
                               child: ListTile(
                                 onTap: () {
-                                  widget.isFriend
-                                      ? controller.toFriendGift(
-                                          controller.args['UID'],
-                                          controller.args['GIFTS'][index],
-                                          controller.args['EID'],
-                                          gifts[index]['STATUS']
-                                          )
-                                      : controller.toEdit(gifts[index]);
+                                  controller.toEdit(gifts[index]);
                                 },
                                 title: Text("${gifts[index]['NAME']}"),
                                 subtitle: Text(
-                                    "Category: ${gifts[index]['CATEGORY']}\n Status: Upcoming"),
+                                    "Category: ${gifts[index]['CATEGORY']}\n Status: ${gifts[index]['STATUS']}"),
                                 trailing: Wrap(
                                   children: [
-                                    widget.isFriend
-                                        ? gifts[index]['STATUS'] == "pledged" || gifts[index]['STATUS'] == "purchased"
-                                            ?  gifts[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
-                                            :  IconButton(
-                                                icon: Icon(Icons.handshake,
-                                                    color: Colors.amber),
-                                                tooltip: 'Pledge',
-                                                onPressed: () {})
-                                        : gifts[index]['STATUS'] == "pledged" || gifts[index]['STATUS'] == "purchased"
-                                            ?  gifts[index]['STATUS'] == "pledged" ? StatusContainer(staus: "Pledged") : StatusContainer(staus: "Purhcased")
+                                     gifts[index]['STATUS'] == "Pledged" || gifts[index]['STATUS'] == "Purchased"
+                                            ?   StatusContainer(staus: "${gifts[index]['STATUS']}") 
                                             : Wrap(children: [
                                             IconButton(
                                               icon: Icon(Icons.edit),
@@ -225,7 +208,7 @@ class _GiftsListState extends State<GiftsList> {
                                                 try {
                                                   print("trying deleting gift");
                                                    controller.deleteGift(
-                                                      gifts[index]['ID'], index, "${gifts[index]['NAME']}", "Category: ${gifts[index]['CATEGORY']}\n Status: Upcoming");
+                                                      gifts[index]['ID'], index, "${gifts[index]['NAME']}", "Category: ${gifts[index]['CATEGORY']}\n Status: ${gifts[index]['STATUS']}");
                                                     // setState(() {});
                                                 } catch (e) {
                                                   print(

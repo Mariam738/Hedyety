@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/constants/constants.dart';
-import 'package:hedyety/features/gift_management/models/event_model.dart';
+import 'package:hedyety/Repository/models/event_model.dart';
 import 'package:hedyety/main_controller.dart';
 
 class EventFormController {

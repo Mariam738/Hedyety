@@ -7,6 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
 import 'package:hedyety/constants/constants.dart';
+import 'package:hedyety/date.dart';
 import 'package:hedyety/features/gift_management/screens/events_list/events_list_controller.dart';
 import 'package:hedyety/features/gift_management/screens/events_list/events_list_controller.dart';
 import 'package:hedyety/features/gift_management/screens/events_list/events_list_controller.dart';
@@ -119,7 +120,7 @@ class _EventsListState extends State<EventsList> {
                                 },
                                 title: Text("${controller.myList[index]['name']}"),
                                 subtitle: Text(
-                                    "Category: ${controller.myList[index]['category']}\n Status: Upcoming"),
+                                    "Category: ${controller.myList[index]['category']}\n Status: ${compareDate(controller.myList[index]['date'])}"),
                               ),
                             );
                           },
@@ -134,9 +135,7 @@ class _EventsListState extends State<EventsList> {
           widget.isFriend == false 
               ? Expanded(
                   child: FutureBuilder(
-                      future: widget.isFriend == false
-                          ? controller.readEvents(widget.isFiltered)
-                          : controller.readFriendEvents(),
+                      future:  controller.readEvents(widget.isFiltered),
                       builder: (BuildContext, snapshot) {
                         print(snapshot.connectionState);
                         if (snapshot.connectionState ==
@@ -176,11 +175,10 @@ class _EventsListState extends State<EventsList> {
                                       },
                                       title: Text("${events?[index]['NAME']}"),
                                       subtitle: Text(
-                                          "Category: ${events[index]['CATEGORY']}\n Status: Upcoming"),
-                                      trailing: widget.isFriend
-                                          ? SizedBox(height: 0, width: 0)
-                                          : Wrap(
+                                          "Category: ${events[index]['CATEGORY']}\n Status: ${compareDate(events[index]['DATE'])}"),
+                                      trailing: Wrap(
                                               children: [
+                                                compareDate(events[index]['DATE']) != 'Past' ? 
                                                 IconButton(
                                                     icon: Icon(Icons.edit),
                                                     color:
@@ -189,7 +187,7 @@ class _EventsListState extends State<EventsList> {
                                                       controller
                                                           .toEditEventForm(
                                                               index);
-                                                    }),
+                                                    }) : SizedBox.shrink(),
                                                 SizedBox(
                                                   width: 10,
                                                 ),
@@ -206,7 +204,7 @@ class _EventsListState extends State<EventsList> {
                                                   },
                                                 ),
                                               ],
-                                            ),
+                                            )
                                     ),
                                   ),
                                 );

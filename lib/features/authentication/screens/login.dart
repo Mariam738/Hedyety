@@ -56,6 +56,7 @@ class Login extends StatelessWidget {
                   prefixIcon: const Icon(Icons.password),
                   labelText: "Password",
                   controller: controller.password2,
+                  validator: MyConstants.password2Validator,
                   obscureText: true,
                 ),
                 const SizedBox(height: 16),

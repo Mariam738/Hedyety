@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/components/toggle/gf_toggle.dart';
@@ -51,17 +52,20 @@ class _GiftDetailsState extends State<GiftDetails> {
       print('GiftDetails initialized with args: $args');
     if(widget.isFriend) {
       _pledged = true;
-       controller.getFriendGift(args!['uid'], args!['gid']);
+      //  controller.getFriendGift(args!['uid'], args!['gid']);
     }
     else{ if (widget.isEdit) {
       controller.name.text = args!['name'];
       controller.description.text = args!['description'];
       controller.price.text = args!['price'];
+      controller.url.text = args!['url'];
+      controller.uploadedImageUrl = args!['url'];
       controller.value =
           MyConstants.categoryList.indexWhere((e) => e == args!['category']);
       print('gifts ${args!['id']}');
       // setState(() {});
     }
+    if(args?['status']!='Unpledged')_pledged = true;
     controller.id = args!['id'];
     controller.eventName = args!['eventName'];
     args=null;
@@ -76,9 +80,12 @@ class _GiftDetailsState extends State<GiftDetails> {
   @override
   Widget build(BuildContext context) {
     Color _clr = Colors.black;
-    bool isEditable = widget.isAdd || widget.isEdit || _pledged == false || widget.isFriend ==false;
+    bool isEditable = widget.isAdd || widget.isEdit || widget.isFriend ==false;
               // print('controller value ${controller.value}');
-    
+                    print('hereeee $args');
+    if(widget.isAdd) _pledged = false;
+    if(_pledged==true) isEditable = false;
+
     return Template(
       title: "Gift Details",
       child: SingleChildScrollView(
@@ -87,8 +94,58 @@ class _GiftDetailsState extends State<GiftDetails> {
           child: Column(
             children: [
               /// Uploaded Image
-              if (controller.uploadedImage != null)
-                Image.file(controller.uploadedImage!),
+              if (controller.uploadedImageUrl != null )
+                // Image.file(controller.uploadedImage!),
+                Image.network('${controller.url.text}'),
+
+                if(widget.isFriend)
+                 StreamBuilder(
+                    stream: controller.getGiftStream(args?['uid'], args?['eid'], args?['gid']
+                        ), // The stream to listen to
+                    builder: (BuildContext context,
+                        AsyncSnapshot<DatabaseEvent> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        Center(
+                            child: CircularProgressIndicator(
+                          color: MyTheme.primary,
+                        ));
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text("Error ${snapshot.error}"));
+                      } else if (!snapshot.hasData) {
+                        return Center(child: Text("No data yet."));
+                      }
+                      {
+                        Map<dynamic, dynamic> map =
+                            snapshot.data?.snapshot.value as dynamic ?? {};
+                            if (map.isNotEmpty) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if(controller.name.text !=map['NAME'] || controller.description.text != map['DESCRIPTION'] 
+                  || controller.price.text!= map['PRICE'] ||controller.value != MyConstants.categoryList.indexWhere((e) => e == map['CATEGORY'] 
+                  ||args!['status']!=map['STATUS'] )){
+                    controller.firendGiftName= map['NAME'];
+                  controller.name.text= map['NAME']??"";
+                        controller.description.text= map['DESCRIPTION']??"";
+                        controller.price.text= map['PRICE']??"";
+                        controller.value = MyConstants.categoryList.indexWhere((e) => e == map['CATEGORY']);
+                        args!['status']=map['STATUS'];
+                        print('${args!['status']}   dddddddddddddd ');
+                        setState(() {});
+                  }
+                  
+                });
+
+              }
+                     
+                        
+                        
+                        // controller.myList.clear();
+                        // controller.myList = list;
+                        // if(widget.isFiltered== true){ controller.filterFriend();print('filtttttered ${controller.args}');}
+                        // return Center(child: Text("$map"));
+                        return SizedBox.shrink();
+                      }
+                        }
+                 ),
 
               /// Gift Name Field
               InputField(
@@ -112,6 +169,17 @@ class _GiftDetailsState extends State<GiftDetails> {
                 labelText: "Gift Price",
                 prefixIcon: const Icon(CupertinoIcons.money_dollar),
                 controller: controller.price,
+                validator: MyConstants.priceValidator,
+
+              ),
+              const SizedBox(height: 16),
+              if(widget.isFriend==false|| widget.isAdd || widget.isEdit)
+              InputField(
+                readOnly: !isEditable,
+                labelText: "Image Url",
+                prefixIcon: const Icon(Icons.web),
+                controller: controller.url,
+                validator: MyConstants.urlValidator,
               ),
               const SizedBox(height: 16),
 
@@ -197,24 +265,24 @@ class _GiftDetailsState extends State<GiftDetails> {
               /// Status
               // Switch(
               //   value: !_pledged,
-              //   activeColor: MyTheme.primary,
+              //   activeColor: MyTheme.primar y,
               //   onChanged: (_) {},
               // ),
-              widget.isAdd || widget.isFriend
-                  ? SizedBox.shrink()
-                  : MySwitch(
-                      value: !_pledged,
-                      onChanged: (_) {},
-                      text: "Status: Pledged. Cannot be modified.",
-                      altText:
-                          "Status: Available for editing. Not pledged yet.",
-                    ),
-              const SizedBox(height: 16),
+              // widget.isAdd || widget.isFriend
+              //     ? SizedBox.shrink()
+              //     : MySwitch(
+              //         value: !_pledged,
+              //         onChanged: (_) {},
+              //         text: "Status: Pledged. Cannot be modified.",
+              //         altText:
+              //             "Status: Available for editing. Not pledged yet.",
+              //       ),
+              // const SizedBox(height: 16),
 
               /// Button
               /// Pledge Button
               widget.isFriend
-                  ? (args!['status']==null
+                  ? (args!['status']=='Unpledged'
                       ? SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -229,21 +297,23 @@ class _GiftDetailsState extends State<GiftDetails> {
                   :
 
                   /// Upload Image
+                  _pledged==false?
                   SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
                           if (!_pledged) {
-                            await controller.uploadImage();
+                            controller.uploadedImageUrl = controller.url.text;
+                            // await controller.uploadImage();
                             setState(() {});
                           }
                         },
                         child: const Text("⬆️ Upload Image 📷"),
                       ),
-                    ),
+                    ):SizedBox.shrink(),
               const SizedBox(height: 16),
 
-              widget.isFriend ? SizedBox.shrink() :
+              widget.isFriend || _pledged? SizedBox.shrink() :
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -269,6 +339,7 @@ class _GiftDetailsState extends State<GiftDetails> {
                 ),
               ),
               const SizedBox(height: 16),
+                  
             ],
           ),
         ),

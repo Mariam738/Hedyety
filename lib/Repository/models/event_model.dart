@@ -59,6 +59,15 @@ class EventModel {
       print('error in getEvents $e');
     }
   }
+  static getEid(id) async{
+    try{
+    List<Map> res=  await mydb.readData('''SELECT EID FROM 'EVENTS' WHERE ID="$id"''');
+    print('getEventEid $res, id $id');
+    return res;
+    } catch(e){
+      print('error in getEid $e');
+    }
+  }
 
   static deleteEvent(int id) async {
     try {

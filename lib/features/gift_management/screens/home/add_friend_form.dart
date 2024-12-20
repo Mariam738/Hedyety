@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
+import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/features/gift_management/screens/home/add_friend_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:crypto/crypto.dart';
@@ -32,6 +33,7 @@ class AddFriendForm extends StatelessWidget {
                 prefixIcon: const Icon(Icons.person),
                 labelText: "Friend Name",
                 controller: controller.name,
+                validator: MyConstants.usernamaeValidator,
                 ),
                 const SizedBox(height: 16),
                 /// Email
@@ -57,6 +59,7 @@ class AddFriendForm extends StatelessWidget {
                   prefixIcon: const Icon(Icons.phone),
                   labelText: "Phone",
                   controller: controller.phone,
+                  validator: MyConstants.phoneValidator,
                 ),
                 const SizedBox(height: 16),
 

@@ -6,7 +6,7 @@ import 'package:hedyety/Repository/firebase_api.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/constants/constants.dart';
-import 'package:hedyety/features/gift_management/models/gift_model.dart';
+import 'package:hedyety/Repository/models/gift_model.dart';
 import 'package:hedyety/main_controller.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -16,6 +16,7 @@ class GiftDetailsController {
   TextEditingController description = TextEditingController();
   TextEditingController price = TextEditingController();
   TextEditingController category = TextEditingController();
+  TextEditingController url = TextEditingController();
 
   LocalDatabse mydb = LocalDatabse();
     RealtimeDB fb = RealtimeDB();
@@ -28,6 +29,7 @@ class GiftDetailsController {
   String? eventName;
   int? value = null;
   File? uploadedImage;
+  String? uploadedImageUrl;
   var friendGift;
   void Function()? onValueChanged;
 
@@ -41,7 +43,7 @@ class GiftDetailsController {
               SnackBar(content: const Text('Remember to select a category.')));
     else if (key.currentState!.validate()) {
     int res = await GiftModel.addGift(name.text, description.text,
-        MyConstants.categoryList[value!], price.text, id!);
+        MyConstants.categoryList[value!], price.text, id!, url.text);
         print('$res in  addGift');
     if (res != null) {
       print('addGifts $res');
@@ -61,7 +63,7 @@ class GiftDetailsController {
               SnackBar(content: const Text('Remember to select a category.')));
     else if (key.currentState!.validate()) {
     int res = await GiftModel.editGift(name.text, description.text,
-        MyConstants.categoryList[value!], price.text, id!);
+        MyConstants.categoryList[value!], price.text, id!, url.text);
     if (res != null) {
           MainController.navigatorKey.currentState!.pop();
     } else
@@ -95,7 +97,7 @@ class GiftDetailsController {
   Future pledgeGift(String friendid, String gid, String eid) async{
     try{
     await fb.pledgeGift(await _auth.getUserId()!,friendid, gid, eid);
-      FirebaseApi().sendNotification(topic: friendid, title: "A gift is pledged:", body: "$firendGiftName", userId: "userId");
+      FirebaseApi().sendNotification(topic: friendid, title: "A gift is pledged:", body: "$firendGiftName", userId: "$eid $gid");
 
     MainController.msngrKey.currentState!.showSnackBar(SnackBar(content: Text('Gift pledged sucessfully')));
 
@@ -105,4 +107,9 @@ class GiftDetailsController {
     }
     return;
   }
+
+    getGiftStream(String uid, String eid, String gid) {
+    return fb.getGiftStream(uid, eid, gid);
+  }
+
 }

@@ -9,6 +9,7 @@ class GiftModel {
   String? price;
   String? status;
   int? eventId;
+  String? url;
 
   GiftModel(
       {this.id,
@@ -18,17 +19,18 @@ class GiftModel {
       this.category,
       this.price,
       this.status,
-      this.eventId});
+      this.eventId,
+      this.url});
 
   static LocalDatabse mydb = LocalDatabse();
 
   static addGift(String name, String description, String category, String price,
-      int eventId) async {
+      int eventId, String url) async {
     try {
       int res = await mydb.insertData(
-          '''INSERT INTO 'GIFTS' ('NAME','DESCRIPTION', 'CATEGORY', 'PRICE', 'EVENTSID')
+          '''INSERT INTO 'GIFTS' ('NAME','DESCRIPTION', 'CATEGORY', 'PRICE', 'EVENTSID', 'STATUS', 'URL')
         VALUES ("${name}","${description}",
-        "${category}", "${price}", "${eventId}")''');
+        "${category}", "${price}", "${eventId}", "Unpledged", "${url}")''');
 
       return res;
     } catch (e) {
@@ -38,13 +40,14 @@ class GiftModel {
   }
 
   static editGift(String name, String description, String category,
-      String price, int eventId) async {
+      String price, int eventId, String url) async {
     try {
       int res = await mydb.updateData('''UPDATE 'GIFTS' SET 
                               'NAME' = "${name}",
                               'DESCRIPTION' = "${description}",
                               'CATEGORY' = "${category}", 
-                              'PRICE' = "${price}"
+                              'PRICE' = "${price}",
+                              'URL' = "${url}"
                               WHERE ID= "${eventId}"''');
       return res;
     } catch (e) {
@@ -58,6 +61,18 @@ class GiftModel {
       int res = await mydb.updateData('''UPDATE 'GIFTS' SET 
                               'STATUS' = "${status}"
                               WHERE ID= "${eventId}"''');
+      return res;
+    } catch (e) {
+      print('error in add Event $e');
+      return null;
+    }
+  }
+
+   static editGiftStatusByGID(String status, int gid) async {
+     try {
+      int res = await mydb.updateData('''UPDATE 'GIFTS' SET 
+                              'STATUS' = "${status}"
+                              WHERE GID= "${gid}"''');
       return res;
     } catch (e) {
       print('error in add Event $e');
@@ -114,6 +129,7 @@ class GiftModel {
       'CATEGORY': category,
       'PRICE': price,
       'STATUS': status,
+      'URL':url,
     };
   }
 }

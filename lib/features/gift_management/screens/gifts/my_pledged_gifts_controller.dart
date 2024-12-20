@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/auth_service.dart';
+import 'package:hedyety/Repository/firebase_api.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/main_controller.dart';
 
@@ -17,8 +18,10 @@ class MyPledgedGiftsController {
     return mylist;
   }
 
-  Future setPurhcasedGiftStatus (String friendid, String gid) async {
+  Future setPurhcasedGiftStatus (String friendid,String name, String gid) async {
     await fb.setGiftStatus(friendid, gid, 'purchased');
+    await FirebaseApi().sendNotification(topic: friendid, title: "A gift is purchaded:", body: "$name", userId: "$gid");
+
     MainController.navigatorKey.currentState!.pushReplacementNamed('/LmyPledgedGifts');
     
   }

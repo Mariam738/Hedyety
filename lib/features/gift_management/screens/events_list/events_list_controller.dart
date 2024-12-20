@@ -8,7 +8,8 @@ import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/common/custom_page_routes.dart';
 import 'package:hedyety/constants/constants.dart';
-import 'package:hedyety/features/gift_management/models/event_model.dart';
+import 'package:hedyety/date.dart';
+import 'package:hedyety/Repository/models/event_model.dart';
 import 'package:hedyety/features/gift_management/screens/events_list/events_list.dart';
 import 'package:hedyety/features/gift_management/screens/gifts/gifts_list.dart';
 import 'package:hedyety/main_controller.dart';
@@ -26,7 +27,7 @@ class EventsListController {
   var args;
   RealtimeDB fb = RealtimeDB();
   bool? isFriend;
-   GlobalKey<AnimatedListState> eventAnimKey = GlobalKey();
+  GlobalKey<AnimatedListState> eventAnimKey = GlobalKey();
 
   EventsListController._internal();
 
@@ -74,14 +75,12 @@ class EventsListController {
                 'Delete all gifts associated with this event first.')));
   }
 
-  toFriendGiftList( String eid){
-    MainController.navigatorKey.currentState!
-          .pushReplacementNamed('/LfriendGiftsList', arguments: {
-        'uid': args['uid'],
-        'eid': eid
-      });
-      // print(
-      //     'args > gifts $args ${myList[index]['GIFTS']} ${myList[index]['ID']}');
+  toFriendGiftList(String eid) {
+    MainController.navigatorKey.currentState!.pushReplacementNamed(
+        '/LfriendGiftsList',
+        arguments: {'uid': args['uid'], 'eid': eid});
+    // print(
+    //     'args > gifts $args ${myList[index]['GIFTS']} ${myList[index]['ID']}');
   }
 
   toGiftsList(int index) {
@@ -140,12 +139,14 @@ class EventsListController {
           });
 
     filtered = myList.where((e) => category.contains(e['CATEGORY'])).toList();
+    filtered =
+        filtered.where((e) => status.contains(compareDate(e['DATE']))).toList();
+
     MainController.navigatorKey.currentState!.pop();
     MainController.navigatorKey.currentState!
         .pushReplacementNamed('/LfilteredEventsList', arguments: args);
     return filtered;
   }
-
 
   Future readFriendEvents() async {
     Map res = await fb.getEventsByUid(args['uid']);
@@ -170,17 +171,22 @@ class EventsListController {
   filterForFriend(bool isAscending, List category, List status) async {
     MainController.navigatorKey.currentState!.pop();
     MainController.navigatorKey.currentState!
-        .pushReplacementNamed('/LfriendFilteredEventsList', arguments: {'uid' :args['uid'], 'isAscending': isAscending, 'category':category, 'status': status});
+        .pushReplacementNamed('/LfriendFilteredEventsList', arguments: {
+      'uid': args['uid'],
+      'isAscending': isAscending,
+      'category': category,
+      'status': status
+    });
     return;
   }
 
-  filterFriend(){
+  filterFriend() {
     bool isAscending = args['isAscending'];
-    List category  = args['category'];
+    List category = args['category'];
     List status = args['status'];
-   if (category.isEmpty) category = MyConstants.eventsList;
+    if (category.isEmpty) category = MyConstants.eventsList;
     if (status.isEmpty) status = MyConstants.eventStatusList;
-       isAscending
+    isAscending
         ? myList.sort((a, b) {
             return a['name'].compareTo(b['name']);
           })
@@ -189,6 +195,8 @@ class EventsListController {
           });
 
     filtered = myList.where((e) => category.contains(e['category'])).toList();
+    filtered =
+        filtered.where((e) => status.contains(compareDate(e['date']))).toList();
     myList = filtered;
     return;
   }
@@ -196,6 +204,4 @@ class EventsListController {
   getEventStream() {
     return fb.getEventStream(args['uid']);
   }
-
-  
 }

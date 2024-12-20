@@ -5,11 +5,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/local_database.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
+import 'package:hedyety/date.dart';
 import 'package:hedyety/features/gift_management/screens/home/home_controller.dart';
 import 'package:hedyety/features/gift_management/screens/home/landscape_home.dart';
 import 'package:hedyety/my_theme.dart';
 
-import '../../models/user_model.dart';
+import '../../../../Repository/models/user_model.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -89,7 +90,7 @@ class _HomeState extends State<Home> {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasError) {
-                      return Center(child: Text("Error ${snapshot.error}"));
+                      return Center(child: Text("Error consider refreshing the page."));
                     } else if (snapshot.hasData && snapshot.data != null) {
                       List friends = (snapshot.data as List)
                           .map((e) => Map.from(e))
@@ -131,9 +132,19 @@ class _HomeState extends State<Home> {
                                         return Text("Error ${snapshot.error}");
                                       } else if (!snapshot.hasData) {
                                         return Text("No data yet.");
-                                      }
+                                      }{
+                                        int cnt = 0;
+                                        if(snapshot.data!.snapshot.children.length > 0){
+                                          Map events =snapshot.data?.snapshot.value as Map;
+                                          events.forEach((key, val) {
+
+                                            if(compareDate(val['date'])=='Upcoming') cnt++;
+                                          });
+                                        // Map map = x.ma
+                                        }
                                       return Text(
-                                          "Upcoming Events: ${snapshot.data?.snapshot.children.length}");
+                                          "Upcoming Events: ${cnt}");
+                                      }
                                     },
                                   ),
                                   leading: CircleAvatar(

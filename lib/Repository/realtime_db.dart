@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:hedyety/features/gift_management/models/event_model.dart';
-import 'package:hedyety/features/gift_management/models/gift_model.dart';
+import 'package:hedyety/Repository/models/event_model.dart';
+import 'package:hedyety/Repository/models/gift_model.dart';
 
 class RealtimeDB {
   final FirebaseDatabase _fb = FirebaseDatabase.instance;
@@ -89,7 +89,7 @@ class RealtimeDB {
 
   Future pledgeGift(String uid, String friendid, String gid, String eid) async {
     await _fb.ref('/pledgedGifts/$uid/$gid').update({'friendId': friendid, 'eid': eid});
-    await _fb.ref('/gifts/$friendid/$gid').update({'STATUS': 'pledged'});
+    await _fb.ref('/gifts/$friendid/$eid/$gid').update({'STATUS': 'Pledged'});
     // TO DO sync user gift status with firebase maybe on login
   }
 
@@ -112,7 +112,7 @@ class RealtimeDB {
     // get gift name and status
     for(int i = 0; i < list.length; i++) {
       var giftName = await getGiftNameById(list[i]['FID'], list[i]['GID']);
-      var giftStatus = await getGiftStatus(list[i]['FID'], list[i]['GID']);
+      var giftStatus = await getGiftStatus(list[i]['FID'],list[i]['EID'], list[i]['GID']);
       var eventDate = await getEventDateById(list[i]['FID'], list[i]['EID']);
       var firendName = await getUserNameById(list[i]['FID']);
       Map<String, dynamic> m = {'giftName' : giftName, 'giftStatus' : giftStatus, 'eventDate' : eventDate, 'firendName' : firendName, 
@@ -134,8 +134,8 @@ class RealtimeDB {
          return null;
   }
   
-  Future getGiftStatus(String uid, String gid) async {
-    final snap = await _fb.ref('/gifts/$uid/$gid/STATUS').get();
+  Future getGiftStatus(String uid, String eid, String gid) async {
+    final snap = await _fb.ref('/gifts/$uid/$eid/$gid/STATUS').get();
     if (snap.exists) return snap.value;
     return null;
   }
@@ -158,9 +158,14 @@ class RealtimeDB {
     return _fb.ref('/events/$uid').orderByChild('name').onValue;
   }
 
-  Stream<DatabaseEvent>? getGiftStream(String uid, String eid){
+  Stream<DatabaseEvent>? getGiftsStream(String uid, String eid){
     return _fb.ref('/gifts/$uid/$eid')?.onValue;
   }
+
+   Stream<DatabaseEvent>? getGiftStream(String uid, String eid, String gid){
+    return _fb.ref('/gifts/$uid/$eid/$gid')?.onValue;
+  }
+
 
   // Future setFCMToken(String uid, String token) async {
   //   if((await _fb.ref('/users/$uid/token').get()).value !=null)

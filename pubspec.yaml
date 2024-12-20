@@ -61,6 +61,7 @@ dependencies:
   dio: ^5.7.0
 
   sqflite_common_ffi: any
+  intl: ^0.20.1
 
   
 

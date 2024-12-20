@@ -69,6 +69,7 @@ class _EventFormState extends State<EventForm> {
                   prefixIcon: const Icon(Icons.date_range),
                   labelText: "Date",
                   controller: controller.date,
+                  validator: MyConstants.dateValidator,
                 ),
                 const SizedBox(height: 16),
 
