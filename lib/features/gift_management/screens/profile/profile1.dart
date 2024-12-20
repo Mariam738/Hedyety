@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hedyety/common/widgets/switch/my_switch.dart';
 import 'package:hedyety/common/widgets/containers/input_field.dart';
 import 'package:hedyety/common/widgets/template/template.dart';
+import 'package:hedyety/constants/constants.dart';
 import 'package:hedyety/features/gift_management/screens/profile/profile1_controller.dart';
 import 'package:hedyety/my_theme.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -17,6 +18,13 @@ class Profile1 extends StatefulWidget {
 
 class _TestState extends State<Profile1> {
   Profile1Controller controller = Profile1Controller();
+  late Future future;
+
+  @override
+  void initState() {
+    super.initState();
+    future = controller.readUserProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,7 @@ class _TestState extends State<Profile1> {
       title: "Profile",
       child: SingleChildScrollView(
         child: FutureBuilder(
-            future: controller.readUserProfile(),
+            future: future,
             builder: (BuildContext, snapshot) {
               print(snapshot.connectionState);
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -39,10 +47,10 @@ class _TestState extends State<Profile1> {
                   return Column(
                     children: [
                       /// User info (Name, Email, Notification)
-                      const Center(
+                      Center(
                         child: CircleAvatar(
                           backgroundImage: NetworkImage(
-                              'https://cdn-icons-png.flaticon.com/512/149/149071.png'),
+                              "${controller.uploadedImageUrl}"),
                           radius: 50,
                         ),
                       ),
@@ -59,6 +67,14 @@ class _TestState extends State<Profile1> {
                               controller: controller.username,
                             ),
                             const SizedBox(height: 16),
+
+                             InputField(
+                readOnly: false,
+                labelText: "Image Url",
+                prefixIcon: const Icon(Icons.web),
+                controller: controller.url,
+                validator: MyConstants.urlValidator,
+              ),
                             SizedBox(height: MyTheme.sizeBtwnSections),
 
                             /// Email
@@ -80,6 +96,21 @@ class _TestState extends State<Profile1> {
 
                             SizedBox(height: MyTheme.sizeBtwnSections),
 
+                            // Upload Profile
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  controller.uploadedImageUrl =
+                                      controller.url.text;
+                                  // await controller.uploadImage();
+                                  setState(() {});
+                                },
+                                child: const Text("⬆️ Upload Image 📷"),
+                              ),
+                            ),
+                            SizedBox(height: 16),
+
                             /// Update Button
                             SizedBox(
                               width: double.infinity,
@@ -91,7 +122,7 @@ class _TestState extends State<Profile1> {
                                 child: const Text("🔄 Update Data🛠️"),
                               ),
                             ),
-                            SizedBox(height: MyTheme.sizeBtwnSections),
+                            SizedBox(height: 16),
 
                             /// My Pledged Gifts
                             SizedBox(

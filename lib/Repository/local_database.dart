@@ -25,6 +25,7 @@ class LocalDatabse {
       db.execute('''CREATE TABLE IF NOT EXISTS 'USERS' (
       'ID' INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
       'UID' TEXT,
+      'URL' TEXT,
       'NAME' TEXT,
       'EMAIL' TEXT,
       'PHONE' TEXT,

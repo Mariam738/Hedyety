@@ -96,7 +96,7 @@ class _GiftDetailsState extends State<GiftDetails> {
               /// Uploaded Image
               if (controller.uploadedImageUrl != null )
                 // Image.file(controller.uploadedImage!),
-                Image.network('${controller.url.text}'),
+                Image.network('${controller.uploadedImageUrl}'),
 
                 if(widget.isFriend)
                  StreamBuilder(
@@ -121,12 +121,13 @@ class _GiftDetailsState extends State<GiftDetails> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if(controller.name.text !=map['NAME'] || controller.description.text != map['DESCRIPTION'] 
                   || controller.price.text!= map['PRICE'] ||controller.value != MyConstants.categoryList.indexWhere((e) => e == map['CATEGORY'] 
-                  ||args!['status']!=map['STATUS'] )){
+                  ||args!['status']!=map['STATUS'] || map['URL']!=controller.uploadedImageUrl )){
                     controller.firendGiftName= map['NAME'];
                   controller.name.text= map['NAME']??"";
                         controller.description.text= map['DESCRIPTION']??"";
                         controller.price.text= map['PRICE']??"";
                         controller.value = MyConstants.categoryList.indexWhere((e) => e == map['CATEGORY']);
+                        controller.uploadedImageUrl = map['URL'];
                         args!['status']=map['STATUS'];
                         print('${args!['status']}   dddddddddddddd ');
                         setState(() {});

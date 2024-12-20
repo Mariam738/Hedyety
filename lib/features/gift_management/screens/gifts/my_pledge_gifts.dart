@@ -56,7 +56,7 @@ class MyPledgeGifts extends StatelessWidget {
                                       icon: const Icon(Icons.check_circle),
                                       color: MyTheme.editButtonColor,
                                       onPressed: () {
-                                        controller.setPurhcasedGiftStatus(controller.mylist[index]['fid'],controller.mylist[index]['name'], controller.mylist[index]['gid']);
+                                        controller.setPurhcasedGiftStatus(controller.mylist[index]['fid'], controller.mylist[index]['eid'],controller.mylist[index]['giftName'], controller.mylist[index]['gid']);
                                       },
                                      )
                                   : SizedBox.shrink()

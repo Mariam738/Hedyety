@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hedyety/Repository/auth_service.dart';
+import 'package:hedyety/Repository/models/user_model.dart';
 import 'package:hedyety/Repository/shred_pref.dart';
 import 'package:hedyety/Repository/realtime_db.dart';
 import 'package:hedyety/Repository/models/event_model.dart';
@@ -48,6 +51,11 @@ class Profile2Controller {
   Future<void> publishEvents() async {
     print('publishEvents $events');
     List<EventModel> list = events.map((e)=>EventModel(id: e['ID'],name: e['NAME'], date: e['DATE'], location: e['LOCATION'], category:e['CATEGORY'], eid: e['EID'])).toList();
+    var userRes = (await UserModel.getUserById(await await SharedPref().getCurrentUid()));
+    var usr = {'name': userRes[0]['NAME'], 'email': userRes[0]['EMAIL'], 'phone': userRes[0]['PHONE'], 'prefrence': userRes[0]['PREFERENCE'], 'url': userRes[0]['URL']};
+    // update user profile
+    await fb.addUser(usr,_auth.getUserId()! );
+    print('userProgile ${usr}');
     bool res = await fb.publishUserEvents(list, mapGifts(), _auth.getUserId()!);
     if(res == true){
       syncEventEid();
@@ -57,7 +65,7 @@ class Profile2Controller {
     
   }
   List mapGifts() {
-    return gifts.map((subList)=> subList.map((e)=> GiftModel(id: e['ID'], name: e['NAME'], description: e['DESCRIPTION'], category: e['CATEGORY'], status: e['STATUS'], price: e['PRICE'],  gid: e['GID'])).toList()).toList();
+    return gifts.map((subList)=> subList.map((e)=> GiftModel(id: e['ID'], name: e['NAME'], description: e['DESCRIPTION'], category: e['CATEGORY'], status: e['STATUS'], price: e['PRICE'],  gid: e['GID'], url: e['URL'])).toList()).toList();
   }
 
 

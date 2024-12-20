@@ -7,7 +7,9 @@ class Profile1Controller {
   final GlobalKey<FormState> key = GlobalKey();
   TextEditingController username = TextEditingController();
   TextEditingController email = TextEditingController();
+  TextEditingController url = TextEditingController();
   bool notification = false;
+  String? uploadedImageUrl;
 
   // Singleton
   static final Profile1Controller _instance = Profile1Controller._internal();
@@ -21,12 +23,14 @@ class Profile1Controller {
     username.text = res[0]['NAME'];
     email.text = res[0]['EMAIL'];
     notification = res[0]['PREFERENCE'] == 1 ? true : false;
+    url.text = res[0]['URL']??'';
+    uploadedImageUrl = url.text;
     print('notificatino $notification');
-    return true;
+    return res;
   }
 
   updateUserProfile() async {
-    var res = await UserModel.updateuser(username.text,
+    var res = await UserModel.updateuser(username.text, url.text,
     // email.text,
         notification == true ? 1 : 0, await SharedPref().getCurrentUid());
     // TODO update in firebase

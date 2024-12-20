@@ -58,7 +58,8 @@ class SignupController{
         print("successfult sign up");
         Digest digest = sha512.convert(utf8.encode(password.text));
         saveDataLocal(digest, _auth.getUserId()!);
-        UserModel usr = UserModel(name: username.text.trim(), email: email.text.trim(), phone: phone.text, password: password.text.trim(), prefrence: true);
+        UserModel usr = UserModel(name: username.text.trim(), email: email.text.trim(), phone: phone.text, password: password.text.trim(), prefrence: true,
+         url:'https://cdn-icons-png.flaticon.com/512/149/149071.png');
         saveDataCloud(usr.toJson(), _auth.getUserId()!);
         await FirebaseMessaging.instance.subscribeToTopic(await _auth.getUserId()!);
         MainController.navigatorKey.currentState!.pushReplacementNamed('/Llogin');

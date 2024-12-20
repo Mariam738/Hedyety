@@ -90,7 +90,7 @@ class _HomeState extends State<Home> {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasError) {
-                      return Center(child: Text("Error consider refreshing the page."));
+                      return Center(child: Text("Error. Consider refreshing the page."));
                     } else if (snapshot.hasData && snapshot.data != null) {
                       List friends = (snapshot.data as List)
                           .map((e) => Map.from(e))
@@ -137,7 +137,7 @@ class _HomeState extends State<Home> {
                                         if(snapshot.data!.snapshot.children.length > 0){
                                           Map events =snapshot.data?.snapshot.value as Map;
                                           events.forEach((key, val) {
-
+                                              print('userprofile ${val['url']}');
                                             if(compareDate(val['date'])=='Upcoming') cnt++;
                                           });
                                         // Map map = x.ma
@@ -147,10 +147,31 @@ class _HomeState extends State<Home> {
                                       }
                                     },
                                   ),
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQanlasPgQjfGGU6anray6qKVVH-ZlTqmuTHw&s"),
+                                  leading:  StreamBuilder(
+                                    stream: controller.getUserProfileStream(
+                                        controller.friends[index]['UID']),
+                                    builder: (context,
+                                        AsyncSnapshot<DatabaseEvent> snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return CircleAvatar();
+                                      } else if (snapshot.hasError) {
+                                        return  CircleAvatar();
+                                      } else if (!snapshot.hasData) {
+                                        return  CircleAvatar();
+                                      }{
+                                                                                  Map profile =snapshot.data?.snapshot.value as Map;
+
+                                        return  CircleAvatar(child: Image.network('${profile['url']}'));
+
+                                      }
+                                      
+                                    },
                                   ),
+                                  
+                                  
+                                  
+                                  
                                   trailing: IconButton(
                                     icon: Icon(Icons.delete),
                                     color: MyTheme.primary,

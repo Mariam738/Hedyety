@@ -123,4 +123,10 @@ class HomeController {
     return fb.getEventStream(uid);
     return null;
   }
+
+  getUserProfileStream(uid) {
+    if(uid!=null)
+    return fb.getUserProfile(uid);
+    return null;
+  }
 }

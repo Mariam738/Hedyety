@@ -6,19 +6,20 @@ class UserModel {
   String? email;
   String? phone;
   String? password;
+  String? url;
   bool? prefrence; // notification on/ off
 
-  UserModel({this.name, this.email, this.phone, this.password, this.prefrence});
+  UserModel({this.name, this.email, this.phone, this.password, this.prefrence, this.url});
 
   static LocalDatabse mydb = LocalDatabse();
 
-  static updateuser(String name, 
+  static updateuser(String name, String url,
   //String email, 
   int pref, int id) async {
     try {
       //  'EMAIL' = "$email",
       int res = await mydb.updateData(
-          '''UPDATE 'USERS' SET 'NAME' = "$name",
+          '''UPDATE 'USERS' SET 'NAME' = "$name", 'URL' = "$url",
           'PREFERENCE' = "$pref" WHERE ID= "$id"''');
       print("the value is $res");
     } catch (e) {
@@ -98,8 +99,9 @@ class UserModel {
       String username, String email, String phone, String uid) async {
     try {
       int pref = 1;
+      String url = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';// defualt
       int res = await mydb.insertData(
-          '''INSERT INTO 'USERS' ('NAME','EMAIL', 'PHONE', 'UID', 'PREFERENCE') VALUES ("$username","$email","$phone","$uid","$pref")''');
+          '''INSERT INTO 'USERS' ('NAME','EMAIL', 'PHONE', 'UID', 'PREFERENCE', 'URL') VALUES ("$username","$email","$phone","$uid","$pref","$url")''');
       print('addUser $res');
       return res;
     } catch (e) {
@@ -139,8 +141,8 @@ class UserModel {
       'name': name,
       'email': email,
       'phone': phone,
-      'password': password,
       'prefrence': true,
+      'url': url,
     };
   }
 }

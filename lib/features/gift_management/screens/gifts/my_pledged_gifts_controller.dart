@@ -18,8 +18,8 @@ class MyPledgedGiftsController {
     return mylist;
   }
 
-  Future setPurhcasedGiftStatus (String friendid,String name, String gid) async {
-    await fb.setGiftStatus(friendid, gid, 'purchased');
+  Future setPurhcasedGiftStatus (String friendid,String eid, String name, String gid) async {
+    await fb.setGiftStatus(friendid, eid, gid, 'Purchased');
     await FirebaseApi().sendNotification(topic: friendid, title: "A gift is purchaded:", body: "$name", userId: "$gid");
 
     MainController.navigatorKey.currentState!.pushReplacementNamed('/LmyPledgedGifts');

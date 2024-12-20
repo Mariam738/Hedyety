@@ -39,6 +39,7 @@ class RealtimeDB {
     }
   }
 
+
   Future<Map> publishUserGift(List gifts, String uid, String eid) async {
     Map<String, bool> map = {};
     for (int i = 0; i < gifts.length; i++) {
@@ -111,19 +112,19 @@ class RealtimeDB {
     List<Map<String, dynamic>> l = [];
     // get gift name and status
     for(int i = 0; i < list.length; i++) {
-      var giftName = await getGiftNameById(list[i]['FID'], list[i]['GID']);
+      var giftName = await getGiftNameById(list[i]['FID'],list[i]['EID'], list[i]['GID']);
       var giftStatus = await getGiftStatus(list[i]['FID'],list[i]['EID'], list[i]['GID']);
       var eventDate = await getEventDateById(list[i]['FID'], list[i]['EID']);
       var firendName = await getUserNameById(list[i]['FID']);
       Map<String, dynamic> m = {'giftName' : giftName, 'giftStatus' : giftStatus, 'eventDate' : eventDate, 'firendName' : firendName, 
-      'gid': list[i]['GID'], 'fid': list[i]['FID']};
+      'gid': list[i]['GID'], 'fid': list[i]['FID'], 'eid': list[i]['EID']};
       l.add(m);
     }
     return l;
   }
 
-  Future getGiftNameById(String fid, String gid) async {
-      final snap = await _fb.ref('/gifts/$fid/$gid/NAME').get();
+  Future getGiftNameById(String fid, String eid, String gid) async {
+      final snap = await _fb.ref('/gifts/$fid/$eid/$gid/NAME').get();
       if (snap.exists) return snap.value;
          return null;
   }
@@ -146,8 +147,8 @@ class RealtimeDB {
     return null;
   }
 
-  Future setGiftStatus(String friendid, String gid, String status) async {
-    await _fb.ref('/gifts/$friendid/$gid').update({'STATUS': status});
+  Future setGiftStatus(String friendid, String eid, String gid, String status) async {
+    await _fb.ref('/gifts/$friendid/$eid/$gid').update({'STATUS': status});
   }
 
   // Streams 
@@ -164,6 +165,9 @@ class RealtimeDB {
 
    Stream<DatabaseEvent>? getGiftStream(String uid, String eid, String gid){
     return _fb.ref('/gifts/$uid/$eid/$gid')?.onValue;
+  }
+   Stream<DatabaseEvent>? getUserProfile(String uid,){
+    return _fb.ref('/users/$uid')?.onValue;
   }
 
 
